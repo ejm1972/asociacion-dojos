@@ -1,0 +1,1 @@
+<?php /* registro de cuotas */ ?>

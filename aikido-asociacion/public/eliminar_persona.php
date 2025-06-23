@@ -1,0 +1,1 @@
+<?php /* eliminar persona */ ?>

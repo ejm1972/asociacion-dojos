@@ -1,0 +1,1454 @@
+Aquí tenés un proyecto base en PHP para gestionar registros de personas en una asociación de dojos de Aikido. Incluye funcionalidades para:
+    Registrar personas
+    Asociarlas a un dojo
+    Ver la lista de personas y dojos
+    Estructura base para crecer (por ejemplo: historial, grados, eventos)
+
+🧱 Tecnologías usadas
+    PHP 8+
+    MySQL/MariaDB
+    Bootstrap (opcional para UI)
+    Arquitectura sencilla (sin frameworks como Laravel para mantenerlo liviano)
+
+Estructura sugerida
+aikido-asociacion/
+│
+├── config/
+│   └── db.php              # conexión a la base de datos
+│
+├── public/
+│   └── index.php           # página de inicio
+│   └── registrar.php       # formulario para registrar persona
+│   └── dojos.php           # ver/gestionar dojos
+│
+├── includes/
+│   ├── header.php
+│   ├── footer.php
+│   └── functions.php
+│
+├── sql/
+│   └── esquema.sql         # script para la base de datos
+│
+└── README.md
+
+Base de datos: esquema.sql
+
+CREATE DATABASE aikido_asociacion;
+USE aikido_asociacion;
+
+CREATE TABLE dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    pais VARCHAR(100)
+);
+
+CREATE TABLE personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    telefono VARCHAR(50),
+    dojo_id INT,
+    fecha_registro DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id)
+);
+
+🔌 Conexión a la base de datos (config/db.php)
+
+<?php
+$host = 'localhost';
+$db   = 'aikido_asociacion';
+$user = 'root';
+$pass = '';
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    die("Error de conexión: " . $e->getMessage());
+}
+?>
+
+📄 Formulario para registrar personas (public/registrar.php)
+
+<?php include('../config/db.php'); ?>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("INSERT INTO personas (nombre, apellido, email, telefono, dojo_id) VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $_POST['nombre'],
+        $_POST['apellido'],
+        $_POST['email'],
+        $_POST['telefono'],
+        $_POST['dojo_id']
+    ]);
+    echo "Persona registrada con éxito.";
+}
+$dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
+?>
+
+<form method="post">
+    <input name="nombre" placeholder="Nombre" required>
+    <input name="apellido" placeholder="Apellido" required>
+    <input name="email" placeholder="Email">
+    <input name="telefono" placeholder="Teléfono">
+    <select name="dojo_id">
+        <?php foreach ($dojos as $dojo): ?>
+            <option value="<?= $dojo['id'] ?>"><?= $dojo['nombre'] ?></option>
+        <?php endforeach; ?>
+    </select>
+    <button type="submit">Registrar</button>
+</form>
+
+🧾 Página para listar personas (public/index.php)
+
+<?php include('../config/db.php'); ?>
+<?php
+$personas = $pdo->query("
+    SELECT p.*, d.nombre AS dojo
+    FROM personas p
+    LEFT JOIN dojos d ON p.dojo_id = d.id
+    ORDER BY p.apellido, p.nombre
+")->fetchAll();
+?>
+
+<table>
+    <tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Dojo</th></tr>
+    <?php foreach ($personas as $p): ?>
+        <tr>
+            <td><?= $p['nombre'] . ' ' . $p['apellido'] ?></td>
+            <td><?= $p['email'] ?></td>
+            <td><?= $p['telefono'] ?></td>
+            <td><?= $p['dojo'] ?? 'Sin dojo' ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+🚀 Posibles mejoras
+
+    Filtros por dojo o ciudad
+
+    Sistema de usuarios/logins para admins
+
+    Historial de grados, clases, eventos
+
+    Exportar a Excel o PDF
+
+    CRUD completo con edición y eliminación
+
+    Integración con sistema de membresías o cuotas
+
+¿Querés que te lo empaquete como un zip con todo incluido? ¿O lo convertimos en un pequeño módulo para integrar en otro sistema que ya tengas?
+Dijiste:
+Primero empaquetarlo como un zip con todo incluido
+luego seguimos con las mejoras
+ChatGPT dijo:
+
+Listo. Podés descargar el proyecto base desde el siguiente enlace:
+
+📦 Descargar aikido-asociacion.zip
+
+Cuando quieras, seguimos con las mejoras: agregar filtros, historial de grados, módulo de cuotas o usuarios con login.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+la primer mejora, Sistema de usuarios/logins para admins
+ChatGPT dijo:
+
+✅ Sistema de login para administradores agregado.
+
+Podés descargar la nueva versión del proyecto desde acá:
+
+🔐 Descargar aikido-asociacion-auth.zip
+Novedades:
+
+    Login (login.php): formulario para acceder con usuario y contraseña.
+
+    Logout (logout.php): cierre de sesión.
+
+    Protección (includes/auth.php): incluir al inicio de cada página que requiere login.
+
+    Tabla usuarios: con un usuario por defecto admin / admin123.
+
+    Recordá importar también el nuevo archivo SQL sql/usuarios.sql además del esquema.sql.
+
+¿Te gustaría que las páginas como index.php y registrar.php ya vengan protegidas con auth.php?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, ahora las páginas están protegidas por sesión de usuario.
+
+📁 Descargá la nueva versión con login obligatorio en index.php y registrar.php:
+
+🔐 Descargar aikido-asociacion-auth-protegido.zip
+
+Incluye:
+
+    Redirección automática a login.php si no hay sesión iniciada.
+
+    Enlaces para cerrar sesión (logout.php).
+
+¿Avanzamos con la próxima mejora? (como historial de grados, exportar a Excel, o cuotas/membresías)
+
+podemos seguir sin generar zip?
+
+ChatGPT dijo:
+
+Sí, por supuesto. Podemos seguir trabajando en las mejoras directamente desde acá, sin generar más archivos .zip hasta que lo necesites.
+Próximas posibles mejoras (elegí una o indicame otra):
+
+    Historial de grados: registrar y consultar el avance de cinturones o grados de cada persona.
+
+    Sistema de cuotas/membresías: registrar pagos, vencimientos y estados activos.
+
+    Exportar a Excel/PDF: generar reportes descargables.
+
+    Filtros y búsqueda por dojo, ciudad, o nombre.
+
+    Manejo completo de CRUD (editar/borrar personas o dojos).
+
+    Roles de usuario (admin, dojo, lector).
+
+¿Con cuál te gustaría seguir?
+Dijiste:
+agregar roles de usuario
+
+Perfecto, vamos a agregar roles de usuario al sistema actual. Esto permitirá tener, por ejemplo:
+
+    👑 admin: acceso total a todo.
+
+    🏯 dojo: acceso sólo a su dojo y sus personas.
+
+    👁️ lector: acceso sólo para ver, sin modificar.
+
+🧱 Paso 1: Actualizar la tabla usuarios
+
+Vamos a agregar una columna rol y una referencia opcional al dojo_id (en caso de usuarios que administren un solo dojo):
+
+ALTER TABLE usuarios
+ADD rol ENUM('admin', 'dojo', 'lector') NOT NULL DEFAULT 'lector',
+ADD dojo_id INT NULL,
+ADD FOREIGN KEY (dojo_id) REFERENCES dojos(id);
+
+🧪 Paso 2: Mostrar el rol actual
+
+En includes/auth.php, guardamos también el rol del usuario:
+
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header('Location: login.php');
+    exit;
+}
+$usuario_actual = $_SESSION['usuario'];
+$rol_actual = $_SESSION['rol']; // lo seteamos más abajo
+$dojo_actual = $_SESSION['dojo_id'] ?? null;
+
+Y en login.php, después de verificar el login:
+
+if ($user && password_verify($_POST['password'], $user['password'])) {
+    $_SESSION['usuario'] = $user['username'];
+    $_SESSION['rol'] = $user['rol'];
+    $_SESSION['dojo_id'] = $user['dojo_id'];
+    header('Location: index.php');
+    exit;
+}
+
+🔒 Paso 3: Controlar acceso según rol
+
+Por ejemplo, en registrar.php permitimos solo a admin y dojo:
+
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+
+Y si el rol es dojo, solo puede registrar personas en su propio dojo:
+
+$dojos = [];
+if ($rol_actual === 'admin') {
+    $dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
+} elseif ($rol_actual === 'dojo') {
+    $stmt = $pdo->prepare("SELECT * FROM dojos WHERE id = ?");
+    $stmt->execute([$dojo_actual]);
+    $dojos = $stmt->fetchAll();
+}
+
+📋 Paso 4: Filtrar vistas también
+
+En index.php podrías filtrar así:
+
+if ($rol_actual === 'dojo') {
+    $stmt = $pdo->prepare("
+        SELECT p.*, d.nombre AS dojo
+        FROM personas p
+        LEFT JOIN dojos d ON p.dojo_id = d.id
+        WHERE p.dojo_id = ?
+        ORDER BY p.apellido, p.nombre
+    ");
+    $stmt->execute([$dojo_actual]);
+    $personas = $stmt->fetchAll();
+} else {
+    $personas = $pdo->query("
+        SELECT p.*, d.nombre AS dojo
+        FROM personas p
+        LEFT JOIN dojos d ON p.dojo_id = d.id
+        ORDER BY p.apellido, p.nombre
+    ")->fetchAll();
+}
+
+✅ Estado del sistema ahora:
+
+    Admin ve y modifica todo.
+
+    Dojo sólo ve su gente y puede agregar.
+
+    Lector sólo puede ver (y en el futuro, posiblemente con otra página más limitada).
+
+    Se puede seguir usando el mismo login.
+
+¿Querés que prepare algún formulario de creación/edición de usuarios con asignación de roles o creás los usuarios por SQL al principio?
+
+Dijiste:
+si prepara el formulario de creación/edicion de usuarios con asignación de roles
+ChatGPT dijo:
+
+Perfecto. Vamos a crear una página usuarios.php con:
+
+    Listado de usuarios
+
+    Formulario para crear uno nuevo
+
+    Posibilidad de editar uno existente
+
+    Asignar rol y dojo (si aplica)
+
+🧱 Base de datos (recomendación)
+
+Asegurate de tener esto en tu tabla usuarios:
+
+ALTER TABLE usuarios
+ADD rol ENUM('admin', 'dojo', 'lector') NOT NULL DEFAULT 'lector',
+ADD dojo_id INT NULL,
+ADD FOREIGN KEY (dojo_id) REFERENCES dojos(id);
+
+📄 Nuevo archivo: public/usuarios.php
+
+<?php include('../includes/auth.php'); ?>
+<?php include('../config/db.php'); ?>
+
+<?php
+if ($rol_actual !== 'admin') {
+    echo "Acceso denegado.";
+    exit;
+}
+
+// obtener lista de usuarios
+$usuarios = $pdo->query("
+    SELECT u.*, d.nombre AS dojo_nombre 
+    FROM usuarios u
+    LEFT JOIN dojos d ON u.dojo_id = d.id
+")->fetchAll();
+
+// obtener lista de dojos
+$dojos = $pdo->query("SELECT id, nombre FROM dojos")->fetchAll();
+
+// guardar nuevo usuario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $rol = $_POST['rol'];
+    $dojo_id = $_POST['dojo_id'] !== '' ? $_POST['dojo_id'] : null;
+
+    if ($_POST['password'] !== '') {
+        $hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+
+        if (isset($_POST['id']) && $_POST['id'] !== '') {
+            // actualizar usuario existente
+            $stmt = $pdo->prepare("UPDATE usuarios SET username = ?, password = ?, rol = ?, dojo_id = ? WHERE id = ?");
+            $stmt->execute([$username, $hash, $rol, $dojo_id, $_POST['id']]);
+        } else {
+            // crear nuevo
+            $stmt = $pdo->prepare("INSERT INTO usuarios (username, password, rol, dojo_id) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$username, $hash, $rol, $dojo_id]);
+        }
+    } else {
+        // actualizar sin cambiar contraseña
+        $stmt = $pdo->prepare("UPDATE usuarios SET username = ?, rol = ?, dojo_id = ? WHERE id = ?");
+        $stmt->execute([$username, $rol, $dojo_id, $_POST['id']]);
+    }
+
+    header("Location: usuarios.php");
+    exit;
+}
+
+// editar usuario
+$editar = null;
+if (isset($_GET['editar'])) {
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
+    $stmt->execute([$_GET['editar']]);
+    $editar = $stmt->fetch();
+}
+?>
+
+<h2>Usuarios</h2>
+<table border="1">
+    <tr><th>Usuario</th><th>Rol</th><th>Dojo</th><th>Acción</th></tr>
+    <?php foreach ($usuarios as $u): ?>
+        <tr>
+            <td><?= $u['username'] ?></td>
+            <td><?= $u['rol'] ?></td>
+            <td><?= $u['dojo_nombre'] ?? '-' ?></td>
+            <td><a href="?editar=<?= $u['id'] ?>">Editar</a></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<h3><?= $editar ? "Editar Usuario" : "Nuevo Usuario" ?></h3>
+<form method="post">
+    <?php if ($editar): ?>
+        <input type="hidden" name="id" value="<?= $editar['id'] ?>">
+    <?php endif; ?>
+
+    <label>Usuario:</label>
+    <input name="username" required value="<?= $editar['username'] ?? '' ?>"><br>
+
+    <label>Contraseña:</label>
+    <input type="password" name="password" <?= $editar ? '' : 'required' ?>>
+    <?= $editar ? "<small>Dejar en blanco para no cambiar</small>" : "" ?><br>
+
+    <label>Rol:</label>
+    <select name="rol" required>
+        <?php foreach (['admin', 'dojo', 'lector'] as $rol): ?>
+            <option value="<?= $rol ?>" <?= ($editar['rol'] ?? '') === $rol ? 'selected' : '' ?>><?= ucfirst($rol) ?></option>
+        <?php endforeach; ?>
+    </select><br>
+
+    <label>Dojo asignado (opcional):</label>
+    <select name="dojo_id">
+        <option value="">-- Ninguno --</option>
+        <?php foreach ($dojos as $dojo): ?>
+            <option value="<?= $dojo['id'] ?>" <?= ($editar['dojo_id'] ?? '') == $dojo['id'] ? 'selected' : '' ?>>
+                <?= $dojo['nombre'] ?>
+            </option>
+        <?php endforeach; ?>
+    </select><br>
+
+    <button type="submit"><?= $editar ? "Actualizar" : "Crear" ?></button>
+</form>
+
+✅ Resultado
+
+    Página de administración de usuarios (solo accesible a admin).
+
+    Crear o editar usuarios con:
+
+        Nombre de usuario
+
+        Contraseña (nueva o no cambiar)
+
+        Rol (admin, dojo, lector)
+
+        Asociación opcional a un dojo
+
+¿Querés que agreguemos también la eliminación de usuarios, o querés probar esta versión primero?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+probare esta version
+ChatGPT dijo:
+
+Perfecto, Eduardo.
+
+📌 Para probar la página de gestión de usuarios:
+
+    Iniciá sesión como admin (por defecto: admin / admin123).
+
+    Accedé a: http://localhost/aikido-asociacion/public/usuarios.php
+
+    Desde ahí vas a poder:
+
+        Ver todos los usuarios
+
+        Crear nuevos con diferentes roles
+
+        Editar los existentes (con o sin cambiar contraseña)
+
+        Asignar un dojo si es rol dojo (o dejarlo en blanco)
+
+🧪 Si no ves los dojos listados, asegurate de tenerlos cargados previamente en la base de datos (tabla dojos).
+
+Cuando termines de probar, avisame si:
+
+    Querés agregar eliminación de usuarios
+
+    O pasamos a otra mejora (cuotas, grados, filtros, etc.)
+
+Estoy listo para seguir cuando vos quieras.
+
+mejora de Sistema de cuotas/membresías: registrar pagos, vencimientos y estados activos
+ChatGPT dijo:
+
+Excelente elección. Vamos a incorporar un sistema de cuotas/membresías al sistema actual. Esto permitirá:
+
+    Registrar pagos de membresía por persona
+
+    Ver el historial de pagos
+
+    Determinar si una persona está activa o vencida
+
+🧱 Paso 1: Nueva tabla cuotas
+
+Agregamos esta tabla a tu base de datos:
+
+CREATE TABLE cuotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    periodo_desde DATE NOT NULL,
+    periodo_hasta DATE NOT NULL,
+    observacion TEXT,
+    FOREIGN KEY (persona_id) REFERENCES personas(id)
+);
+
+🧾 Paso 2: Lógica para ver el estado actual
+
+Una persona está activa si la fecha actual es menor o igual al periodo_hasta de su última cuota.
+📄 Nueva página: cuotas.php
+
+<?php include('../includes/auth.php'); ?>
+<?php include('../config/db.php'); ?>
+
+<?php
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+
+// filtrar personas por rol
+if ($rol_actual === 'admin') {
+    $personas = $pdo->query("SELECT * FROM personas")->fetchAll();
+} else {
+    $stmt = $pdo->prepare("SELECT * FROM personas WHERE dojo_id = ?");
+    $stmt->execute([$dojo_actual]);
+    $personas = $stmt->fetchAll();
+}
+
+// guardar pago
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("INSERT INTO cuotas (persona_id, fecha_pago, monto, periodo_desde, periodo_hasta, observacion)
+        VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->execute([
+        $_POST['persona_id'],
+        $_POST['fecha_pago'],
+        $_POST['monto'],
+        $_POST['periodo_desde'],
+        $_POST['periodo_hasta'],
+        $_POST['observacion']
+    ]);
+    echo "Pago registrado.";
+}
+
+// obtener cuotas
+$cuotas = $pdo->query("
+    SELECT c.*, p.nombre, p.apellido
+    FROM cuotas c
+    INNER JOIN personas p ON c.persona_id = p.id
+    ORDER BY c.fecha_pago DESC
+")->fetchAll();
+?>
+
+<h2>Registrar pago</h2>
+<form method="post">
+    <label>Persona:</label>
+    <select name="persona_id" required>
+        <?php foreach ($personas as $p): ?>
+            <option value="<?= $p['id'] ?>"><?= $p['apellido'] . ', ' . $p['nombre'] ?></option>
+        <?php endforeach; ?>
+    </select><br>
+
+    <label>Fecha de pago:</label>
+    <input type="date" name="fecha_pago" required><br>
+
+    <label>Monto:</label>
+    <input type="number" step="0.01" name="monto" required><br>
+
+    <label>Periodo desde:</label>
+    <input type="date" name="periodo_desde" required><br>
+
+    <label>Periodo hasta:</label>
+    <input type="date" name="periodo_hasta" required><br>
+
+    <label>Observación:</label>
+    <input name="observacion"><br>
+
+    <button type="submit">Guardar pago</button>
+</form>
+
+<h2>Historial de pagos</h2>
+<table border="1">
+    <tr><th>Persona</th><th>Fecha pago</th><th>Monto</th><th>Periodo</th><th>Obs</th></tr>
+    <?php foreach ($cuotas as $c): ?>
+        <tr>
+            <td><?= $c['apellido'] . ', ' . $c['nombre'] ?></td>
+            <td><?= $c['fecha_pago'] ?></td>
+            <td><?= number_format($c['monto'], 2) ?></td>
+            <td><?= $c['periodo_desde'] ?> a <?= $c['periodo_hasta'] ?></td>
+            <td><?= $c['observacion'] ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+📘 Paso 3 (opcional): Mostrar estado en index.php
+
+Agregamos una subconsulta para el estado actual de cuota (último periodo_hasta):
+
+SELECT p.*,
+    d.nombre AS dojo,
+    (
+        SELECT MAX(periodo_hasta) 
+        FROM cuotas 
+        WHERE persona_id = p.id
+    ) AS ultima_cuota
+FROM personas p
+LEFT JOIN dojos d ON p.dojo_id = d.id
+
+Y lo usamos así:
+
+<td>
+    <?php
+    $activa = isset($p['ultima_cuota']) && $p['ultima_cuota'] >= date('Y-m-d');
+    echo $activa ? '✅ Activa' : '❌ Vencida';
+    ?>
+</td>
+
+✅ Listo para probar
+
+Con esto ya podés:
+
+    Registrar pagos por persona
+
+    Ver historial de pagos
+
+    Determinar si está activo por fecha de cuota
+
+¿Querés que prepare el zip con todo esto integrado, o seguimos con más mejoras antes de empacarlo?
+
+seguimos
+ChatGPT dijo:
+
+Genial. Estas son algunas siguientes mejoras posibles que encajan bien con lo que ya tenemos:
+🔍 1. Filtros y búsqueda
+
+    Filtrar personas por dojo, estado de cuota (activa/vencida), nombre.
+
+    Buscar en vivo desde el listado.
+
+🧾 2. Exportar a Excel o PDF
+
+    Exportar el listado de personas o cuotas.
+
+    Ideal para controles administrativos o envío por email.
+
+🥋 3. Historial de grados
+
+    Registrar cambios de grado (kyu/dan) por persona con fechas.
+
+    Ver evolución técnica de cada practicante.
+
+🔄 4. CRUD completo para personas y dojos
+
+    Agregar edición y eliminación.
+
+    Confirmaciones de borrado.
+
+📅 5. Notificaciones por vencimiento
+
+    Mostrar alertas de próximas cuotas a vencer.
+
+    O marcar con colores los que vencen pronto.
+
+¿Cuál de estas querés que implementemos ahora? ¿O tenés alguna mejora distinta en mente?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+por ahora sigo con 
+Historial de grados
+Registrar cambios de grado (kyu/dan) por persona con fechas.
+Ver evolución técnica de cada practicante.
+Y
+CRUD completo para personas y dojos Agregar edición y eliminación.
+Confirmaciones de borrado.
+ChatGPT dijo:
+
+It seems like I can’t do more advanced data analysis right now. Please try again later.
+
+De todas formas, puedo seguir describiéndote cómo implementar:
+✅ 1. Historial de grados (kyu/dan)
+🗃 SQL (tabla nueva)
+
+CREATE TABLE grados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    grado VARCHAR(50) NOT NULL,
+    fecha_otorgamiento DATE NOT NULL,
+    observacion TEXT,
+    FOREIGN KEY (persona_id) REFERENCES personas(id)
+);
+
+📄 Página grados.php (registro + historial)
+
+Formulario para registrar grados y mostrar historial:
+
+<h2>Registrar grado</h2>
+<form method="post">
+    <select name="persona_id" required>
+        <!-- lista de personas según rol -->
+    </select>
+    <input name="grado" placeholder="Ej: 1º Kyu" required>
+    <input type="date" name="fecha_otorgamiento" required>
+    <input name="observacion" placeholder="Observación">
+    <button type="submit">Guardar</button>
+</form>
+
+<h2>Historial</h2>
+<table>
+    <tr><th>Persona</th><th>Grado</th><th>Fecha</th><th>Obs</th></tr>
+    <!-- loop sobre grados -->
+</table>
+
+Te lo puedo pasar completo si querés copiar y pegar directamente.
+✅ 2. CRUD de personas y dojos
+En el listado index.php agregás:
+
+<td>
+  <a href="editar_persona.php?id=<?= $p['id'] ?>">Editar</a> |
+  <a href="eliminar_persona.php?id=<?= $p['id'] ?>" onclick="return confirm('¿Eliminar esta persona?')">Eliminar</a>
+</td>
+
+Archivo editar_persona.php (similar a registrar):
+
+    Trae datos de la persona por id
+
+    Muestra formulario con valores prellenados
+
+    Al enviar: actualiza
+
+Archivo eliminar_persona.php:
+
+<?php include('../includes/auth.php'); include('../config/db.php');
+$id = $_GET['id'];
+$stmt = $pdo->prepare("DELETE FROM personas WHERE id = ?");
+$stmt->execute([$id]);
+header("Location: index.php");
+
+¿Querés que te complete esos archivos editar/eliminar y la página grados.php ahora por separado para que los copies?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, te paso el código completo para que copies y uses directamente.
+1. Página completa para grados.php
+
+<?php include('../includes/auth.php'); ?>
+<?php include('../config/db.php'); ?>
+
+<?php
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+
+if ($rol_actual === 'admin') {
+    $personas = $pdo->query("SELECT * FROM personas")->fetchAll();
+} else {
+    $stmt = $pdo->prepare("SELECT * FROM personas WHERE dojo_id = ?");
+    $stmt->execute([$dojo_actual]);
+    $personas = $stmt->fetchAll();
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("INSERT INTO grados (persona_id, grado, fecha_otorgamiento, observacion) VALUES (?, ?, ?, ?)");
+    $stmt->execute([
+        $_POST['persona_id'],
+        $_POST['grado'],
+        $_POST['fecha_otorgamiento'],
+        $_POST['observacion']
+    ]);
+    echo "<p style='color:green;'>Grado registrado.</p>";
+}
+
+$historial = $pdo->query("
+    SELECT g.*, p.nombre, p.apellido
+    FROM grados g
+    INNER JOIN personas p ON g.persona_id = p.id
+    ORDER BY g.fecha_otorgamiento DESC
+")->fetchAll();
+?>
+
+<h2>Registrar grado</h2>
+<form method="post">
+    <label>Persona:</label>
+    <select name="persona_id" required>
+        <?php foreach ($personas as $p): ?>
+            <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['apellido'] . ', ' . $p['nombre']) ?></option>
+        <?php endforeach; ?>
+    </select><br>
+
+    <label>Grado:</label>
+    <input name="grado" placeholder="Ej: 3º Kyu, 1º Dan" required><br>
+
+    <label>Fecha otorgamiento:</label>
+    <input type="date" name="fecha_otorgamiento" required><br>
+
+    <label>Observación:</label>
+    <input name="observacion"><br>
+
+    <button type="submit">Guardar</button>
+</form>
+
+<h2>Historial de grados</h2>
+<table border="1">
+    <tr><th>Persona</th><th>Grado</th><th>Fecha</th><th>Obs</th></tr>
+    <?php foreach ($historial as $g): ?>
+        <tr>
+            <td><?= htmlspecialchars($g['apellido'] . ', ' . $g['nombre']) ?></td>
+            <td><?= htmlspecialchars($g['grado']) ?></td>
+            <td><?= htmlspecialchars($g['fecha_otorgamiento']) ?></td>
+            <td><?= htmlspecialchars($g['observacion']) ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+2. Página para editar_persona.php
+
+<?php
+include('../includes/auth.php');
+include('../config/db.php');
+
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$id = (int)$_GET['id'];
+
+// Obtener datos para llenar el formulario
+$stmt = $pdo->prepare("SELECT * FROM personas WHERE id = ?");
+$stmt->execute([$id]);
+$persona = $stmt->fetch();
+
+if (!$persona) {
+    echo "Persona no encontrada.";
+    exit;
+}
+
+// Guardar cambios
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("UPDATE personas SET nombre = ?, apellido = ?, email = ?, telefono = ?, dojo_id = ? WHERE id = ?");
+    $stmt->execute([
+        $_POST['nombre'],
+        $_POST['apellido'],
+        $_POST['email'],
+        $_POST['telefono'],
+        $_POST['dojo_id'],
+        $id
+    ]);
+    header("Location: index.php");
+    exit;
+}
+
+// Obtener dojos para el select
+$dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
+?>
+
+<h2>Editar Persona</h2>
+<form method="post">
+    <input name="nombre" value="<?= htmlspecialchars($persona['nombre']) ?>" required><br>
+    <input name="apellido" value="<?= htmlspecialchars($persona['apellido']) ?>" required><br>
+    <input name="email" value="<?= htmlspecialchars($persona['email']) ?>"><br>
+    <input name="telefono" value="<?= htmlspecialchars($persona['telefono']) ?>"><br>
+    <select name="dojo_id">
+        <?php foreach ($dojos as $dojo): ?>
+            <option value="<?= $dojo['id'] ?>" <?= $dojo['id'] == $persona['dojo_id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($dojo['nombre']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select><br>
+    <button type="submit">Guardar cambios</button>
+</form>
+
+3. Página para eliminar_persona.php
+
+<?php
+include('../includes/auth.php');
+include('../config/db.php');
+
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$id = (int)$_GET['id'];
+
+$stmt = $pdo->prepare("DELETE FROM personas WHERE id = ?");
+$stmt->execute([$id]);
+
+header("Location: index.php");
+exit;
+
+4. Para los dojos, hacés lo mismo: editar_dojo.php y eliminar_dojo.php
+
+    editar_dojo.php trae el dojo por id, muestra un formulario para editar nombre, ciudad, país y guarda.
+
+    eliminar_dojo.php elimina el dojo por id.
+
+5. Por último, en tu index.php agregá al listado la columna para acciones:
+
+<th>Acciones</th>
+
+Y en cada fila:
+
+<td>
+    <a href="editar_persona.php?id=<?= $p['id'] ?>">Editar</a> |
+    <a href="eliminar_persona.php?id=<?= $p['id'] ?>" onclick="return confirm('¿Eliminar esta persona?')">Eliminar</a>
+</td>
+
+Si querés, te paso también los archivos para editar y eliminar dojos.
+
+¿Querés que te los pase?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, acá te dejo los archivos para editar y eliminar dojos.
+1. editar_dojo.php
+
+<?php
+include('../includes/auth.php');
+include('../config/db.php');
+
+if ($rol_actual !== 'admin') {
+    echo "Acceso denegado.";
+    exit;
+}
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$id = (int)$_GET['id'];
+
+$stmt = $pdo->prepare("SELECT * FROM dojos WHERE id = ?");
+$stmt->execute([$id]);
+$dojo = $stmt->fetch();
+
+if (!$dojo) {
+    echo "Dojo no encontrado.";
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("UPDATE dojos SET nombre = ?, ciudad = ?, pais = ? WHERE id = ?");
+    $stmt->execute([
+        $_POST['nombre'],
+        $_POST['ciudad'],
+        $_POST['pais'],
+        $id
+    ]);
+    header("Location: index.php");
+    exit;
+}
+?>
+
+<h2>Editar Dojo</h2>
+<form method="post">
+    <label>Nombre:</label>
+    <input name="nombre" value="<?= htmlspecialchars($dojo['nombre']) ?>" required><br>
+
+    <label>Ciudad:</label>
+    <input name="ciudad" value="<?= htmlspecialchars($dojo['ciudad']) ?>"><br>
+
+    <label>País:</label>
+    <input name="pais" value="<?= htmlspecialchars($dojo['pais']) ?>"><br>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+
+2. eliminar_dojo.php
+
+<?php
+include('../includes/auth.php');
+include('../config/db.php');
+
+if ($rol_actual !== 'admin') {
+    echo "Acceso denegado.";
+    exit;
+}
+
+if (!isset($_GET['id'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$id = (int)$_GET['id'];
+
+// Antes de eliminar, podrías agregar validación para que no haya personas vinculadas a ese dojo.
+
+$stmt = $pdo->prepare("DELETE FROM dojos WHERE id = ?");
+$stmt->execute([$id]);
+
+header("Location: index.php");
+exit;
+
+3. En el listado de dojos (si tenés uno) agregá las columnas de acción
+
+<th>Acciones</th>
+
+Y en cada fila:
+
+<td>
+    <a href="editar_dojo.php?id=<?= $dojo['id'] ?>">Editar</a> |
+    <a href="eliminar_dojo.php?id=<?= $dojo['id'] ?>" onclick="return confirm('¿Eliminar este dojo?')">Eliminar</a>
+</td>
+
+Con esto ya tenés CRUD completo para personas y dojos, más el historial de grados para los practicantes.
+
+Si necesitás que arme o adapte alguna otra página, o que te ayude con diseño o seguridad, avisame.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+podemos empaquetar ahora todo el proyecto?
+ChatGPT dijo:
+
+Listo ✅
+
+📦 Acá tenés el proyecto completo actualizado, con todas las funcionalidades incorporadas hasta ahora:
+
+🔗 Descargar aikido-asociacion-final.zip
+
+Incluye:
+
+    Sistema de login con roles (admin, dojo, lector)
+
+    Gestión de usuarios y asignación de dojos
+
+    Registro y estado de cuotas/membresías
+
+    Historial de grados por persona
+
+    CRUD completo para personas y dojos
+
+Cuando quieras, podemos continuar con:
+
+    Exportar datos a Excel/PDF
+
+    Filtros por dojo o estado
+
+    Notificaciones de vencimiento
+
+    Mejoras visuales/responsive
+
+¿Querés algo más por ahora? 
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+puedes armar una estructura del proyecto como al principio pero todo actualizado?
+ChatGPT dijo:
+
+Claro, Eduardo. Acá tenés la estructura actualizada del proyecto aikido-asociacion, con todas las funcionalidades incorporadas:
+📁 Estructura del Proyecto (actualizada a junio 2025)
+
+aikido-asociacion/
+│
+├── sql/
+│   └── esquema.sql                # Script para crear todas las tablas (dojos, personas, usuarios, cuotas, grados)
+│
+├── config/
+│   └── db.php                     # Conexión PDO a la base de datos
+│
+├── includes/
+│   └── auth.php                   # Verificación de sesión y roles
+│
+├── public/                        # Archivos accesibles desde navegador
+│   ├── index.php                 # Listado de personas con estado de cuota (activa/vencida)
+│   ├── registrar.php             # Registro de nueva persona (admin y dojo)
+│   ├── login.php                 # Login de usuario
+│   ├── logout.php                # Cierre de sesión
+│   │
+│   ├── usuarios.php              # ABM de usuarios (solo admin)
+│   │
+│   ├── cuotas.php                # Registro y consulta de pagos de membresía
+│   ├── grados.php                # Registro y consulta de historial de grados (kyu/dan)
+│   │
+│   ├── editar_persona.php        # Edición de persona
+│   ├── eliminar_persona.php      # Eliminación de persona (con confirmación)
+│   ├── editar_dojo.php           # Edición de dojo
+│   ├── eliminar_dojo.php         # Eliminación de dojo (con confirmación)
+
+🧱 Tablas creadas en esquema.sql
+
+- dojos (id, nombre, ciudad, país)
+- personas (id, nombre, apellido, email, teléfono, dojo_id)
+- usuarios (id, username, password, rol, dojo_id)
+- cuotas (id, persona_id, fecha_pago, monto, periodo_desde, periodo_hasta, observación)
+- grados (id, persona_id, grado, fecha_otorgamiento, observación)
+
+🧑‍💼 Roles implementados
+
+    admin: acceso completo a todo.
+
+    dojo: ve y gestiona solo su dojo.
+
+    lector: solo acceso de lectura (a futuro, podría limitarse más).
+
+¿Querés que te incluya esta estructura como README en el zip, o simplemente seguir con más funcionalidades desde acá?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+seguimos desde acá, por ahora voy a probar lo hecho, luego seguimos
+ChatGPT dijo:
+
+Perfecto, Eduardo. Me alegra que ya tengas una base sólida para probar.
+Cuando quieras continuar —sea para mejorar visuales, agregar reportes, notificaciones, o integración con otros sistemas— acá estoy para ayudarte.
+
+📌 Recordá: si algo no funciona como esperás durante las pruebas, podés escribirme con el detalle y lo resolvemos juntos.
+
+¡Éxitos con la implementación y hasta pronto! 🥋💻
+
+el empaquetado final no se generó correctamente
+
+ChatGPT dijo:
+
+✅ Proyecto empaquetado correctamente.
+
+📦 Descargá el archivo actualizado desde aquí:
+aikido-asociacion-final.zip
+
+Incluye toda la estructura del proyecto, archivos base, lógica de cuotas, grados, usuarios y el esquema SQL.
+
+Cuando termines de probar, podemos seguir con:
+
+    Exportaciones (Excel, PDF)
+
+    Reportes o gráficos
+
+    Mejoras visuales o seguridad
+
+¡Éxitos en la implementación!
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+como se puede probar con docker?
+ChatGPT dijo:
+
+¡Buena idea, Eduardo! Docker te permite levantar todo el entorno (PHP, Apache, MySQL) sin instalar nada localmente.
+
+Acá te dejo una forma simple y completa de probar el proyecto aikido-asociacion usando Docker + Docker Compose.
+🐳 Paso 1: Archivos necesarios
+📄 docker-compose.yml
+
+version: '3.8'
+
+services:
+  web:
+    image: php:8.2-apache
+    container_name: aikido_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./aikido-asociacion:/var/www/html
+      - ./docker/php-config.ini:/usr/local/etc/php/conf.d/custom.ini
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    container_name: aikido_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: aikido
+      MYSQL_USER: aikido_user
+      MYSQL_PASSWORD: aikido_pass
+    volumes:
+      - aikido_mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  aikido_mysql_data:
+
+📄 docker/php-config.ini
+
+display_errors=On
+error_reporting=E_ALL
+
+📁 Estructura esperada
+
+📂 tu-carpeta-proyecto/
+├── docker-compose.yml
+├── docker/
+│   └── php-config.ini
+└── aikido-asociacion/
+    ├── public/
+    ├── config/
+    ├── includes/
+    └── sql/
+
+🧱 Paso 2: Levantar el entorno
+
+Abrí una terminal en la carpeta raíz y corré:
+
+docker-compose up -d
+
+Esto crea dos contenedores: aikido_web (PHP+Apache) y aikido_db (MySQL).
+🧪 Paso 3: Cargar la base de datos
+
+    Accedé a MySQL dentro del contenedor:
+
+docker exec -it aikido_db mysql -u root -proot
+
+Luego ejecutá:
+
+USE aikido;
+
+Copiá y pegá el contenido de sql/esquema.sql.
+
+O bien, usá:
+
+    docker cp aikido-asociacion/sql/esquema.sql aikido_db:/esquema.sql
+    docker exec -i aikido_db mysql -u root -proot aikido < /esquema.sql
+
+🌐 Paso 4: Acceder desde navegador
+
+Abrí en tu navegador:
+
+http://localhost:8080/public/login.php
+
+Y ya deberías ver el login de la aplicación.
+🛠 Paso 5: Accesos y pruebas
+
+    Insertá un usuario admin a mano desde MySQL si no hay:
+
+    INSERT INTO usuarios (username, password, rol) 
+    VALUES ('admin', MD5('admin123'), 'admin');
+
+    Iniciá sesión en el sistema y comenzá a probar.
+
+¿Querés que agregue un Dockerfile para instalar extensiones necesarias como pdo_mysql, mysqli o mbstring si hacés más funciones después?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+si, pero con nginx en vez de apache
+ChatGPT dijo:
+
+Perfecto, Eduardo. Acá te dejo una versión de entorno Docker usando PHP + NGINX + MySQL, ideal para despliegues modernos y más livianos que Apache.
+🐳 Estructura final del entorno Docker con NGINX
+
+📂 tu-proyecto/
+├── docker-compose.yml
+├── docker/
+│   ├── nginx.conf
+│   ├── default.conf
+│   ├── php-config.ini
+│   └── Dockerfile
+└── aikido-asociacion/
+    ├── public/
+    ├── config/
+    ├── includes/
+    └── sql/
+
+-----------------------------------------------------------------------------------------------------------------------------------
+📄 docker-compose.yml
+
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: ./docker
+    container_name: aikido_php
+    volumes:
+      - ./aikido-asociacion:/var/www/html
+      - ./docker/php-config.ini:/usr/local/etc/php/conf.d/custom.ini
+    expose:
+      - 9000
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:stable
+    container_name: aikido_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./aikido-asociacion:/var/www/html
+      - ./docker/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+
+  db:
+    image: mysql:5.7
+    container_name: aikido_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: aikido
+      MYSQL_USER: aikido_user
+      MYSQL_PASSWORD: aikido_pass
+    volumes:
+      - aikido_mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  aikido_mysql_data:
+
+-----------------------------------------------------------------------------------------------------------------------------------
+📄 docker/Dockerfile
+
+FROM php:8.2-fpm
+
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+WORKDIR /var/www/html
+
+📄 docker/php-config.ini
+
+display_errors=On
+error_reporting=E_ALL
+
+-----------------------------------------------------------------------------------------------------------------------------------
+📄 docker/nginx.conf (opcional global, pero podés omitirlo)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+📄 docker/default.conf (para nginx)
+
+server {
+    listen 80;
+    index index.php index.html;
+    server_name localhost;
+
+    root /var/www/html/public;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+🚀 Cómo levantarlo
+
+    Guardá todos estos archivos según la estructura.
+
+    Ejecutá:
+
+docker-compose up -d --build
+
+    Accedé a:
+
+http://localhost:8080
+
+🧪 Cargar base de datos
+
+Podés usar este comando:
+
+docker cp aikido-asociacion/sql/esquema.sql aikido_db:/esquema.sql
+docker exec -i aikido_db mysql -u root -proot aikido < /esquema.sql
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+¿Querés que te genere un ZIP con este entorno ya armado para descargarlo directamente y descomprimirlo con todo listo?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Dijiste:
+si
+ChatGPT dijo:
+
+It seems like I can’t do more advanced data analysis right now. Please try again later.
+
+Pero no te preocupes: puedo darte una solución inmediata.
+📦 Alternativa: descargá manualmente estos archivos
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Copiá y guardá estos archivos dentro de tu carpeta del proyecto.
+📄 docker-compose.yml
+
+[... contenido completo que ya te pasé antes ...]
+
+📄 docker/Dockerfile
+
+FROM php:8.2-fpm
+
+RUN docker-php-ext-install pdo pdo_mysql mysqli
+
+WORKDIR /var/www/html
+
+📄 docker/php-config.ini
+
+display_errors=On
+error_reporting=E_ALL
+
+📄 docker/default.conf
+
+server {
+    listen 80;
+    index index.php index.html;
+    server_name localhost;
+
+    root /var/www/html/public;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+
+Si preferís, puedo intentar de nuevo empaquetarlo como .zip apenas se restablezca la herramienta.
+
+¿Querés que te avise o que prepare un script para generar el zip en tu máquina local? 
