@@ -1,6 +1,18 @@
 <?php include('../includes/auth.php'); ?>
 <?php include('../config/db.php'); ?>
 <?php
+if (!in_array($rol_actual, ['admin', 'dojo'])) {
+    echo "Acceso denegado.";
+    exit;
+}
+$dojos = [];
+if ($rol_actual === 'admin') {
+    $dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
+} elseif ($rol_actual === 'dojo') {
+    $stmt = $pdo->prepare("SELECT * FROM dojos WHERE id = ?");
+    $stmt->execute([$dojo_actual]);
+    $dojos = $stmt->fetchAll();
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO personas (nombre, apellido, email, telefono, dojo_id) VALUES (?, ?, ?, ?, ?)");
     $stmt->execute([
@@ -12,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ]);
     echo "Persona registrada con éxito.";
 }
-$dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
 ?>
 
 <a href="logout.php">Cerrar sesión</a>
