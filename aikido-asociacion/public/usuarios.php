@@ -68,7 +68,7 @@ if (isset($_GET['editar'])) {
             <td><?= $u['username'] ?></td>
             <td><?= $u['rol'] ?></td>
             <td><?= $u['dojo_nombre'] ?? '-' ?></td>
-            <td><a href="?editar=<?= $u['id'] ?>">Editar</a></td>
+            <td><a href="editar_usuario.php?id=<?= $usuario['id'] ?>">Editar</a></td>
         </tr>
     <?php endforeach; ?>
 </table>

@@ -1502,3 +1502,4 @@ Si preferís, puedo intentar de nuevo empaquetarlo como .zip apenas se restablez
 
 ¿Querés que te avise o que prepare un script para generar el zip en tu máquina local? 
 
+-----------------------------------------------------------------------------------------------------------------------------------

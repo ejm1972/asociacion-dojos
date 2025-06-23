@@ -29,7 +29,7 @@ services:
     container_name: aikido_db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: aikido
+      MYSQL_DATABASE: aikido_asociacion
       MYSQL_USER: aikido_user
       MYSQL_PASSWORD: aikido_pass
     volumes:
