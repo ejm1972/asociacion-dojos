@@ -10,6 +10,7 @@ Aquí tenés un proyecto base en PHP para gestionar registros de personas en una
     Bootstrap (opcional para UI)
     Arquitectura sencilla (sin frameworks como Laravel para mantenerlo liviano)
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Estructura sugerida
 aikido-asociacion/
 │
@@ -31,6 +32,7 @@ aikido-asociacion/
 │
 └── README.md
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Base de datos: esquema.sql
 
 CREATE DATABASE aikido_asociacion;
@@ -54,6 +56,7 @@ CREATE TABLE personas (
     FOREIGN KEY (dojo_id) REFERENCES dojos(id)
 );
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔌 Conexión a la base de datos (config/db.php)
 
 <?php
@@ -76,6 +79,7 @@ try {
 }
 ?>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 📄 Formulario para registrar personas (public/registrar.php)
 
 <?php include('../config/db.php'); ?>
@@ -107,6 +111,7 @@ $dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
     <button type="submit">Registrar</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧾 Página para listar personas (public/index.php)
 
 <?php include('../config/db.php'); ?>
@@ -131,6 +136,7 @@ $personas = $pdo->query("
     <?php endforeach; ?>
 </table>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🚀 Posibles mejoras
 
     Filtros por dojo o ciudad
@@ -146,6 +152,8 @@ $personas = $pdo->query("
     Integración con sistema de membresías o cuotas
 
 ¿Querés que te lo empaquete como un zip con todo incluido? ¿O lo convertimos en un pequeño módulo para integrar en otro sistema que ya tengas?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 Primero empaquetarlo como un zip con todo incluido
 luego seguimos con las mejoras
@@ -199,6 +207,7 @@ Incluye:
 
 ¿Avanzamos con la próxima mejora? (como historial de grados, exportar a Excel, o cuotas/membresías)
 
+-----------------------------------------------------------------------------------------------------------------------------------
 podemos seguir sin generar zip?
 
 ChatGPT dijo:
