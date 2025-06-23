@@ -1503,3 +1503,453 @@ Si preferís, puedo intentar de nuevo empaquetarlo como .zip apenas se restablez
 ¿Querés que te avise o que prepare un script para generar el zip en tu máquina local? 
 
 -----------------------------------------------------------------------------------------------------------------------------------
+crear un menu general para visualizar despues de login
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a crear un menú general de navegación que se muestra después del login, y que se adapta según el rol del usuario (admin, dojo, lector).
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 1. Crear archivo: public/menu.php
+
+Este será el menú principal del sistema.
+
+<?php
+include('../includes/auth.php');
+?>
+
+<h2>Panel principal</h2>
+<p>Bienvenido, <?= htmlspecialchars($usuario_actual) ?> (rol: <?= htmlspecialchars($rol_actual) ?>)</p>
+
+<ul>
+    <li><a href="index.php">📋 Personas</a></li>
+    <li><a href="dojos.php">🏯 Dojos</a></li>
+    <li><a href="usuarios.php">👤 Usuarios</a></li>
+    <li><a href="cuotas.php">💰 Cuotas</a></li>
+    <li><a href="grados.php">🎓 Grados</a></li>
+    <li><a href="logout.php">🚪 Cerrar sesión</a></li>
+</ul>
+
+-----------------------------------------------------------------------------------------------------------------------------------
+🧩 2. Adaptar visibilidad según el rol (opcional)
+
+Si querés mostrar solo lo que corresponde a cada rol:
+
+<ul>
+    <li><a href="index.php">📋 Personas</a></li>
+    
+    <?php if ($rol_actual === 'admin'): ?>
+        <li><a href="dojos.php">🏯 Dojos</a></li>
+        <li><a href="usuarios.php">👤 Usuarios</a></li>
+    <?php endif; ?>
+    
+    <li><a href="cuotas.php">💰 Cuotas</a></li>
+    <li><a href="grados.php">🎓 Grados</a></li>
+    <li><a href="logout.php">🚪 Cerrar sesión</a></li>
+</ul>
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 3. Redirigir al menú después del login
+
+En tu archivo login.php, después de verificar con password_verify(), redirigí a menu.php:
+
+header("Location: menu.php");
+exit;
+
+🧠 Extra
+
+    Podés agregar el mismo menú en la parte superior de otras páginas (include('menu.php') parcial).
+
+    O mantenerlo como página central y desde ahí navegar.
+
+¿Querés que prepare también una versión con diseño básico (CSS ligero o layout centrado)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+diferencia entre la opcion CSS ligero o layout centrado
+ChatGPT dijo:
+
+Buena pregunta. Te explico la diferencia:
+🎨 Opción 1: CSS ligero
+
+    Se refiere a agregar algo de estilo visual (colores, márgenes, tamaños, hover, tipografía) para que el menú se vea más amigable, pero sin usar frameworks ni mucho código.
+
+Ejemplo:
+
+<ul style="list-style: none; padding: 0;">
+  <li><a href="index.php" style="display: inline-block; padding: 10px; background: #f0f0f0; margin: 5px; text-decoration: none;">Personas</a></li>
+</ul>
+
+✔️ Beneficios:
+
+    Mejora visual inmediata
+
+    No cambia la estructura
+
+    Se puede usar en cualquier lado
+
+🧭 Opción 2: Layout centrado
+
+    Es una estructura de página donde el contenido está centrado vertical y horizontalmente (como una app tipo panel de control), usando flexbox o CSS básico.
+
+Ejemplo:
+
+<body style="display: flex; align-items: center; justify-content: center; height: 100vh;">
+  <div>
+    <h2>Menú principal</h2>
+    <ul>
+      <li><a href="index.php">Personas</a></li>
+    </ul>
+  </div>
+</body>
+
+✔️ Beneficios:
+
+    Hace que toda la página parezca un "dashboard"
+
+    Bueno para pantallas de escritorio
+
+📌 ¿Cuál conviene?
+
+    Si solo querés hacerlo más legible y usable, te recomiendo empezar con CSS ligero.
+
+    Si querés que el menú sea el centro visual de la página, podés usar layout centrado.
+
+¿Querés que te genere una versión con ambos y comparás?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+generar ambas versiones para comparar
+ChatGPT dijo:
+
+Perfecto, Eduardo. Te preparo las dos versiones del menú (menu.php) para que compares:
+-----------------------------------------------------------------------------------------------------------------------------------
+🎨 Versión 1: CSS ligero (estilizado sin centrar)
+
+<?php
+include('../includes/auth.php');
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Menú principal</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        ul.menu {
+            list-style: none;
+            padding: 0;
+        }
+        ul.menu li {
+            margin: 8px 0;
+        }
+        ul.menu li a {
+            text-decoration: none;
+            background-color: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 6px;
+            color: #333;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        ul.menu li a:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h2>Panel principal</h2>
+    <p>Bienvenido, <?= htmlspecialchars($usuario_actual) ?> (rol: <?= htmlspecialchars($rol_actual) ?>)</p>
+
+    <ul class="menu">
+        <li><a href="index.php">📋 Personas</a></li>
+        <li><a href="dojos.php">🏯 Dojos</a></li>
+        <li><a href="usuarios.php">👤 Usuarios</a></li>
+        <li><a href="cuotas.php">💰 Cuotas</a></li>
+        <li><a href="grados.php">🎓 Grados</a></li>
+        <li><a href="logout.php">🚪 Cerrar sesión</a></li>
+    </ul>
+</body>
+</html>
+
+-----------------------------------------------------------------------------------------------------------------------------------
+🧭 Versión 2: Layout centrado (modo panel)
+
+<?php
+include('../includes/auth.php');
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Menú principal</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f9f9f9;
+        }
+        .panel {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        ul.menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        ul.menu li {
+            margin: 10px 0;
+        }
+        ul.menu li a {
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        ul.menu li a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h2>Menú principal</h2>
+        <p>Bienvenido, <?= htmlspecialchars($usuario_actual) ?> (rol: <?= htmlspecialchars($rol_actual) ?>)</p>
+
+        <ul class="menu">
+            <li><a href="index.php">📋 Personas</a></li>
+            <li><a href="dojos.php">🏯 Dojos</a></li>
+            <li><a href="usuarios.php">👤 Usuarios</a></li>
+            <li><a href="cuotas.php">💰 Cuotas</a></li>
+            <li><a href="grados.php">🎓 Grados</a></li>
+            <li><a href="logout.php">🚪 Cerrar sesión</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+
+📌 ¿Qué sigue?
+
+    Probá ambos menu.php reemplazando uno por otro temporalmente.
+
+    Si te gusta el segundo (centrado), podés mantener ese estilo para el resto del sistema.
+
+¿Querés que prepare un layout común (layout.php) para compartir este diseño entre páginas?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Genial. Vamos a crear un layout base (layout.php) que todas tus páginas puedan reutilizar para mantener consistencia (header, diseño, menú, etc.).
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 1. Crear archivo: includes/layout.php
+
+Este layout permite inyectar contenido en una variable $contenido y lo muestra dentro del mismo diseño (centrado, estilizado).
+
+<?php
+// includes/layout.php
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Aikido</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        .menu {
+            margin-bottom: 20px;
+        }
+        .menu a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+        }
+        .menu a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="menu">
+            <a href="menu.php">🏠 Menú</a>
+            <a href="index.php">👥 Personas</a>
+            <a href="dojos.php">🏯 Dojos</a>
+            <a href="usuarios.php">👤 Usuarios</a>
+            <a href="logout.php">🚪 Cerrar sesión</a>
+        </div>
+
+        <?= $contenido ?? '' ?>
+    </div>
+</body>
+</html>
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 2. Usar el layout desde una página
+
+Ejemplo para menu.php:
+
+<?php
+include('../includes/auth.php');
+
+$contenido = '
+    <h2>Panel principal</h2>
+    <p>Bienvenido, ' . htmlspecialchars($usuario_actual) . ' (rol: ' . htmlspecialchars($rol_actual) . ')</p>
+    <ul>
+        <li><a href="index.php">📋 Personas</a></li>
+        <li><a href="dojos.php">🏯 Dojos</a></li>
+        <li><a href="usuarios.php">👤 Usuarios</a></li>
+        <li><a href="cuotas.php">💰 Cuotas</a></li>
+        <li><a href="grados.php">🎓 Grados</a></li>
+    </ul>
+';
+
+include('../includes/layout.php');
+
+🔁 Ventajas
+
+    Podés cambiar el diseño de todas las páginas desde un solo lugar (layout.php).
+
+    En cada página solo definís $contenido.
+
+¿Querés que te lo prepare también para los formularios (registrar, editar, etc.)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Te muestro cómo adaptar los formularios para que usen el nuevo layout.php.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ Ejemplo adaptado: registrar_usuario.php
+
+<?php
+include('../includes/auth.php');
+include('../config/db.php');
+
+if ($rol_actual !== 'admin') {
+    echo "Acceso denegado.";
+    exit;
+}
+
+$dojos = $pdo->query("SELECT id, nombre FROM dojos ORDER BY nombre")->fetchAll();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("INSERT INTO usuarios (username, password, rol, dojo_id) VALUES (?, ?, ?, ?)");
+    $stmt->execute([
+        $_POST['username'],
+        $hashed_password,
+        $_POST['rol'],
+        $_POST['dojo_id'] ?: null
+    ]);
+    header("Location: usuarios.php");
+    exit;
+}
+
+ob_start();
+?>
+
+<h2>Registrar nuevo usuario</h2>
+
+<form method="post">
+    <label>Usuario:</label><br>
+    <input name="username" required><br><br>
+
+    <label>Contraseña:</label><br>
+    <input name="password" type="password" required><br><br>
+
+    <label>Rol:</label><br>
+    <select name="rol" required>
+        <option value="admin">admin</option>
+        <option value="dojo">dojo</option>
+        <option value="lector">lector</option>
+    </select><br><br>
+
+    <label>Dojo (opcional):</label><br>
+    <select name="dojo_id">
+        <option value="">-- Ninguno --</option>
+        <?php foreach ($dojos as $dojo): ?>
+            <option value="<?= $dojo['id'] ?>"><?= htmlspecialchars($dojo['nombre']) ?></option>
+        <?php endforeach; ?>
+    </select><br><br>
+
+    <button type="submit">Crear usuario</button>
+</form>
+
+<p><a href="usuarios.php">Volver al listado</a></p>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');
+
+⚙️ Repetir el patrón
+
+Para cualquier página (editar_usuario.php, registrar_persona.php, registrar_dojo.php, etc.), simplemente:
+
+    Reemplazás todo el HTML por un bloque entre ob_start() y ob_get_clean().
+
+    Ponés eso en la variable $contenido.
+
+    Al final incluís layout.php.
+
+¿Querés que te prepare un ZIP con todos los formularios ya adaptados al layout?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Listo, Eduardo. Podés descargar el ZIP con los formularios adaptados al layout desde el siguiente enlace:
+
+📦 Descargar aikido-formularios-layout.zip
+
+Incluye:
+
+    registrar_usuario.php
+
+    registrar_dojo.php
+
+    includes/layout.php
+
+Cuando quieras seguimos con la adaptación del resto de páginas. 
+

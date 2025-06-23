@@ -69,7 +69,7 @@ $dojos = $pdo->query("SELECT id, nombre FROM dojos ORDER BY nombre")->fetchAll()
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO usuarios (username, password, rol, dojo_id) VALUES (?, ?, ?, ?)");
 
-    $hashed_password = md5($_POST['password']); // O usar password_hash() para mayor seguridad
+    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT); // O usar password_hash() para mayor seguridad
 
     $stmt->execute([
         $_POST['username'],

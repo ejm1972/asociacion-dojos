@@ -9,6 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($user && password_verify($_POST['password'], $user['password'])) {
         $_SESSION['usuario'] = $user['username'];
+        $_SESSION['rol'] = $user['rol'];
+        $_SESSION['dojo_id'] = $user['dojo_id'];
         header('Location: index.php');
         exit;
     } else {

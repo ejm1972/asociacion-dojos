@@ -1,5 +1,5 @@
 <?php
-$host = 'localhost';
+$host = 'db';
 $db   = 'aikido_asociacion';
 $user = 'root';
 $pass = 'root';
