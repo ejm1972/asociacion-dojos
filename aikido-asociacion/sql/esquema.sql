@@ -12,6 +12,7 @@ CREATE TABLE personas (
     email VARCHAR(100),
     telefono VARCHAR(50),
     dojo_id INT,
+    fecha_registro DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (dojo_id) REFERENCES dojos(id)
 );
 
