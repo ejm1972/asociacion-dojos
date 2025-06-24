@@ -63,8 +63,6 @@ ob_start();
     <button type="submit">Guardar persona</button>
 </form>
 
-<p><a href="index.php">Volver al listado</a></p>
-
 <?php
 $contenido = ob_get_clean();
 include('../includes/layout.php');

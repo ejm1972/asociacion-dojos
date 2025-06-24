@@ -5,11 +5,12 @@ require_once('../includes/rol.php');
 
 requiere_rol(['admin']);
 
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    echo "ID de usuario no especificado.";
+if (!isset($_GET['id'])) {
+    header("Location: usuarios.php");
     exit;
 }
+
+$id = (int)$_GET['id'];
 
 // Buscar datos actuales del usuario
 $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE id = ?");
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($_POST['password'])) {
         $query .= ", password = ?";
-        $params[] = md5($_POST['password']);
+        $params[] = password_hash($_POST['password'], PASSWORD_DEFAULT);;
     }
 
     $query .= " WHERE id = ?";

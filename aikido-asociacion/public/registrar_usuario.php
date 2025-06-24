@@ -10,7 +10,7 @@ $dojos = $pdo->query("SELECT id, nombre FROM dojos ORDER BY nombre")->fetchAll()
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO usuarios (username, password, rol, dojo_id) VALUES (?, ?, ?, ?)");
 
-    $hashed_password = md5($_POST['password']); // Podés reemplazar con password_hash en producción
+    $hashed_password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     $stmt->execute([
         $_POST['username'],
@@ -52,8 +52,6 @@ ob_start();
 
     <button type="submit">Crear usuario</button>
 </form>
-
-<p><a href="usuarios.php">Volver al listado</a></p>
 
 <?php
 $contenido = ob_get_clean();

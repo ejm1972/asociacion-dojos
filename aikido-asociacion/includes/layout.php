@@ -6,7 +6,7 @@ $current = basename($_SERVER['SCRIPT_NAME']);
 $rol = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Panel Aikido</title>
@@ -134,7 +134,6 @@ $rol = $_SESSION['rol'] ?? null;
     <div class="panel">
         <?php if (isset($_SESSION['usuario'])): ?>
         <div class="menu">
-            <a href="menu.php" class="<?= $current === 'menu.php' ? 'active' : '' ?>">🏠 Menú</a>
             <a href="index.php" class="<?= $current === 'index.php' ? 'active' : '' ?>">👥 Personas</a>
 
             <?php if ($rol === 'admin'): ?>

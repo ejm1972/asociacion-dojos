@@ -6,12 +6,13 @@ require_once('../includes/rol.php');
 requiere_rol(['admin']);
 
 if (!isset($_GET['id'])) {
-    header("Location: index.php");
+    header("Location: dojos.php");
     exit;
 }
 
 $id = (int)$_GET['id'];
 
+// Obtener datos para llenar el formulario
 $stmt = $pdo->prepare("SELECT * FROM dojos WHERE id = ?");
 $stmt->execute([$id]);
 $dojo = $stmt->fetch();

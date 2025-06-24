@@ -33,8 +33,6 @@ ob_start();
     <button type="submit">Guardar dojo</button>
 </form>
 
-<p><a href="dojos.php">Volver al listado</a></p>
-
 <?php
 $contenido = ob_get_clean();
 include('../includes/layout.php');

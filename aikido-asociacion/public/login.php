@@ -25,6 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ob_start();
 ?>
 
+<?php if (isset($_GET['logout'])): ?>
+    <div class="alerta alerta-info">
+        ✅ Cerraste sesión correctamente.
+    </div>
+<?php elseif (isset($_GET['expirada'])): ?>
+    <div class="alerta alerta-info">
+        ⚠️ Tu sesión expiró por inactividad. Por favor, iniciá sesión nuevamente.
+    </div>
+<?php endif; ?>
+
 <h2>Iniciar sesión</h2>
 
 <?php if ($error): ?>
@@ -34,7 +44,7 @@ ob_start();
 <form method="post">
     <label>Usuario:</label><br>
     <input type="text" name="username" required><br><br>
-
+    
     <label>Contraseña:</label><br>
     <input type="password" name="password" required><br><br>
 
@@ -44,10 +54,3 @@ ob_start();
 <?php
 $contenido = ob_get_clean();
 include('../includes/layout.php');
-
-// <form method="post">
-//     <input name="username" placeholder="Usuario" required>
-//     <input type="password" name="password" placeholder="Contraseña" required>
-//     <button type="submit">Ingresar</button>
-// </form>
-// <?php if (isset($error)) echo "<p>$error</p>"; ?>

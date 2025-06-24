@@ -2801,3 +2801,257 @@ Todo irá dentro del <style> de tu layout.php.
 <div class="alerta alerta-exito">Datos guardados correctamente.</div>
 
 ¿Querés que te prepare un fragmento con todos estos estilos listos para copiar-pegar al final del <style> en layout.php?
+
+opciones para alojamiento gratis de sitios web
+ChatGPT dijo:
+
+Claro, Eduardo. Acá tenés varias opciones gratuitas para alojar sitios web, especialmente útiles para proyectos como este de Aikido en PHP + MySQL:
+🔧 Para sitios estáticos (HTML/CSS/JS):
+
+    No sirven si tu proyecto necesita PHP y base de datos.
+
+    GitHub Pages – Muy estable, ideal para portfolios y documentaciones.
+
+    Netlify – Soporta sitios estáticos y despliegue desde Git.
+
+    Vercel – Similar a Netlify, muy buena experiencia para proyectos front-end.
+
+    Cloudflare Pages – Simple, rápido y con integración Git.
+
+🌐 Para sitios dinámicos con PHP/MySQL (como el tuyo):
+✅ 1. 000WebHost
+
+    Soporte para PHP y MySQL
+
+    Panel propio (no cPanel), anuncios mínimos
+
+    Límite diario de uso, algo inestable si tenés mucho tráfico
+
+    FTP y phpMyAdmin
+
+✅ 2. InfinityFree
+
+    Sin publicidad
+
+    Soporta PHP 7.4 y MySQL
+
+    cPanel personalizado
+
+    Tiene ciertas restricciones (por ejemplo, sin envío de correos SMTP)
+
+✅ 3. AwardSpace
+
+    1 dominio + 3 subdominios gratis
+
+    PHP y MySQL, sin anuncios
+
+    Buen panel pero recursos limitados
+
+✅ 4. FreeHosting.com
+
+    PHP, MySQL, FTP
+
+    Dominio propio (no subdominios)
+
+    Ancho de banda mensual limitado
+
+    Algo menos estable
+
+⚠️ Consideraciones
+
+    Estas opciones son buenas para pruebas y proyectos personales.
+
+    En todos los casos, la base de datos MySQL es limitada (1 base, pocos MB).
+
+    Algunos no permiten correo saliente o tienen limitaciones de cron jobs.
+
+🚀 Alternativa: Local con Docker + ngrok
+
+Si querés mostrar tu proyecto desde tu PC temporalmente:
+
+ngrok http 80
+
+Y compartís el link con quien quieras. No es hosting, pero útil para demos.
+
+¿Querés que te recomiende uno específico para subir este proyecto en PHP/MySQL sin problemas?
+
+agregar vencimiento a la sesión
+ChatGPT dijo:
+
+Perfecto, Eduardo. Agregar vencimiento de sesión mejora la seguridad del sistema, especialmente si dejás el panel abierto sin uso.
+✅ Objetivo: cerrar sesión automáticamente después de X minutos de inactividad.
+
+Te muestro cómo hacerlo paso a paso:
+🛠 1. Definí la duración máxima (por ejemplo, 20 minutos)
+
+En includes/auth.php o un archivo común que se incluya en cada página protegida:
+
+<?php
+session_start();
+
+// Tiempo máximo de inactividad (en segundos)
+define('TIEMPO_MAXIMO_INACTIVIDAD', 20 * 60); // 20 minutos
+
+if (isset($_SESSION['ultimo_acceso'])) {
+    $inactivo = time() - $_SESSION['ultimo_acceso'];
+    if ($inactivo > TIEMPO_MAXIMO_INACTIVIDAD) {
+        session_unset();
+        session_destroy();
+        header("Location: ../login.php?expirada=1");
+        exit;
+    }
+}
+$_SESSION['ultimo_acceso'] = time();
+
+// Asegurar que el usuario esté logueado
+if (!isset($_SESSION['usuario'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Variables comunes
+$usuario_actual = $_SESSION['usuario'];
+$rol_actual = $_SESSION['rol'] ?? null;
+
+🛠 2. Mostrar mensaje en login.php si expiró la sesión
+
+Al inicio de login.php (antes del <form>), agregá:
+
+if (isset($_GET['expirada'])) {
+    echo '<div class="alerta alerta-info">⚠️ Tu sesión expiró por inactividad.</div>';
+}
+
+✅ Resultado
+
+    Cada vez que el usuario navega, se actualiza $_SESSION['ultimo_acceso'].
+
+    Si pasan 20 minutos (o lo que definas) sin actividad, la sesión se destruye y se redirige a login con mensaje.
+
+    Esto se integra perfectamente con tu sistema actual.
+
+¿Querés que lo empaquete listo para reemplazar tu auth.php actual o preferís probarlo manualmente?
+Dijiste:
+lo pruebo manualmente
+ChatGPT dijo:
+
+Perfecto, Eduardo. Probalo tranquilo.
+Si más adelante querés ajustar el tiempo, aplicar cierre automático en más lugares o agregar un contador visible de sesión, me avisás y lo sumamos.
+
+¡Éxitos con las pruebas!
+Dijiste:
+como sería el uso en el login.php
+ChatGPT dijo:
+
+En login.php, solo tenés que agregar un pequeño bloque para mostrar un mensaje si la sesión expiró.
+Este se activa cuando el usuario es redirigido desde auth.php con ?expirada=1 en la URL.
+✅ Paso a agregar en login.php
+🔧 Agregalo antes del formulario (después del session_start() si lo tenés):
+
+<?php if (isset($_GET['expirada'])): ?>
+    <div class="alerta alerta-info">
+        ⚠️ Tu sesión expiró por inactividad. Por favor, iniciá sesión nuevamente.
+    </div>
+<?php endif; ?>
+
+💡 Estilos necesarios (ya propuestos):
+
+En tu layout.php (o en línea si no estás usando layout en login), asegurate de tener esto en <style>:
+
+.alerta {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+}
+.alerta-info {
+    background-color: #cff4fc;
+    color: #055160;
+    border: 1px solid #b6effb;
+}
+
+✅ Resultado:
+
+Cuando un usuario está inactivo más del tiempo definido, se redirige automáticamente a:
+
+login.php?expirada=1
+
+Y el mensaje se muestra arriba del formulario.
+
+¿Querés que el login muestre automáticamente también si hubo un "logout normal" con un mensaje similar?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a hacer que login.php también muestre un mensaje cuando el usuario cierra sesión voluntariamente, además del mensaje por inactividad.
+✅ Paso 1: modificar logout.php
+
+En logout.php, al final del script, redirigí con un indicador de logout:
+
+session_start();
+session_unset();
+session_destroy();
+header("Location: login.php?logout=1");
+exit;
+
+✅ Paso 2: mostrar mensaje en login.php
+
+En login.php, agregá este bloque antes del formulario (puede ir junto con el mensaje de expiración):
+
+<?php if (isset($_GET['logout'])): ?>
+    <div class="alerta alerta-info">
+        ✅ Cerraste sesión correctamente.
+    </div>
+<?php elseif (isset($_GET['expirada'])): ?>
+    <div class="alerta alerta-info">
+        ⚠️ Tu sesión expiró por inactividad. Por favor, iniciá sesión nuevamente.
+    </div>
+<?php endif; ?>
+
+✅ Resultado
+
+    Si cierra sesión normalmente:
+    login.php?logout=1 → muestra “Cerraste sesión correctamente”
+
+    Si la sesión expira:
+    login.php?expirada=1 → muestra “Tu sesión expiró por inactividad”
+
+¿Querés que te prepare un fragmento con ambos mensajes para insertar directamente en tu login?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Acá tenés el fragmento completo listo para pegar en tu login.php, justo antes del formulario de login:
+✅ Fragmento HTML/PHP para mostrar mensajes
+
+<?php if (isset($_GET['logout'])): ?>
+    <div class="alerta alerta-info">
+        ✅ Cerraste sesión correctamente.
+    </div>
+<?php elseif (isset($_GET['expirada'])): ?>
+    <div class="alerta alerta-info">
+        ⚠️ Tu sesión expiró por inactividad. Por favor, iniciá sesión nuevamente.
+    </div>
+<?php endif; ?>
+
+✅ Asegurate de tener estos estilos en tu layout o <style>
+
+.alerta {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+}
+.alerta-info {
+    background-color: #cff4fc;
+    color: #055160;
+    border: 1px solid #b6effb;
+}
+
+🧪 ¿Cómo probar?
+
+    Iniciá sesión, luego andá a logout.php → deberías ver: ✅ Cerraste sesión correctamente.
+
+    Esperá más de 20 minutos (o cambiá el tiempo a 60 segundos para testear) → redirige a login con mensaje de expiración.
+
+Listo para pegar. ¿Querés que prepare algo más con esto?
+
