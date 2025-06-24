@@ -1953,3 +1953,318 @@ Incluye:
 
 Cuando quieras seguimos con la adaptación del resto de páginas. 
 
+-----------------------------------------------------------------------------------------------------------------------------------
+siguiendo con el layout.php, el menu.php con el layout aplicado queda redundante
+ChatGPT dijo:
+
+Exactamente, Eduardo. Una vez que tenés layout.php, el archivo menu.php puede simplificarse mucho porque:
+
+    Ya no necesita incluir <html>, <body>, ni CSS.
+
+    Solo define $contenido y lo inyecta en layout.php.
+
+    La barra de navegación ya está incluida dentro del layout, así que no hay que repetirla.
+
+✅ Versión simplificada de menu.php usando layout.php
+
+<?php
+include('../includes/auth.php');
+
+ob_start();
+?>
+<h2>Panel principal</h2>
+<p>Bienvenido, <?= htmlspecialchars($usuario_actual) ?> (rol: <?= htmlspecialchars($rol_actual) ?>)</p>
+
+<ul>
+    <li><a href="index.php">📋 Personas</a></li>
+    <li><a href="dojos.php">🏯 Dojos</a></li>
+    <li><a href="usuarios.php">👤 Usuarios</a></li>
+    <li><a href="cuotas.php">💰 Cuotas</a></li>
+    <li><a href="grados.php">🎓 Grados</a></li>
+</ul>
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');
+
+🧼 ¿Y qué se puede eliminar?
+
+Si antes tenías HTML, CSS o repetías la navegación en menu.php, todo eso puede irse. Solo mantenés el contenido propio de la página.
+
+¿Querés que prepare otras páginas (usuarios.php, dojos.php, etc.) con este mismo patrón usando layout?
+Dijiste:
+vuelvo al layout y al menu
+en el primero está el menu como barra y en el segundo está vertical
+la pagina de menu.php podría quedar vacía directamente
+ChatGPT dijo:
+
+Exacto, Eduardo. Muy buena observación.
+
+Si ya tenés el menú de navegación horizontal fijo en layout.php, entonces:
+✅ menu.php puede quedar como una página de bienvenida o incluso vacía.
+
+Por ejemplo:
+Opción A: solo un título
+
+<?php
+include('../includes/auth.php');
+
+ob_start();
+?>
+<h2>Bienvenido al sistema de la Asociación de Dojos de Aikido</h2>
+<p>Usá la barra superior para navegar.</p>
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');
+
+Opción B: completamente vacío
+
+<?php
+include('../includes/auth.php');
+
+$contenido = '';
+include('../includes/layout.php');
+
+📌 En resumen
+
+    layout.php ya cumple la función de barra y estilo.
+
+    menu.php puede ser opcional o simplemente mostrar un mensaje de bienvenida.
+
+    Podés configurar el login para redirigir a menu.php, y desde ahí empezar a navegar.
+
+¿Querés que el layout también destaque visualmente la página activa en el menú?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a hacer que el menú en layout.php:
+
+✅ Destaque el enlace de la página actual
+✅ Sea claro para el usuario en qué sección está
+🛠 Cómo funciona
+
+Usamos $_SERVER['SCRIPT_NAME'] o basename(__FILE__) para detectar la página actual, y le aplicamos una clase CSS activa.
+✅ Versión mejorada de includes/layout.php con resalte de menú
+
+<?php
+$current = basename($_SERVER['SCRIPT_NAME']);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Aikido</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        .menu {
+            margin-bottom: 20px;
+        }
+        .menu a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        .menu a:hover {
+            background-color: #e6f0ff;
+        }
+        .menu a.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="menu">
+            <a href="menu.php" class="<?= $current === 'menu.php' ? 'active' : '' ?>">🏠 Menú</a>
+            <a href="index.php" class="<?= $current === 'index.php' ? 'active' : '' ?>">👥 Personas</a>
+            <a href="dojos.php" class="<?= $current === 'dojos.php' ? 'active' : '' ?>">🏯 Dojos</a>
+            <a href="usuarios.php" class="<?= $current === 'usuarios.php' ? 'active' : '' ?>">👤 Usuarios</a>
+            <a href="logout.php">🚪 Cerrar sesión</a>
+        </div>
+
+        <?= $contenido ?? '' ?>
+    </div>
+</body>
+</html>
+
+🔍 Resultado
+
+    El botón de navegación correspondiente a la página actual aparece con fondo azul y texto blanco.
+
+    Se adapta automáticamente según el archivo .php cargado.
+
+¿Querés que los enlaces se oculten según el rol (admin, dojo, lector) también desde el layout?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a extender layout.php para que:
+
+✅ Oculte o muestre enlaces según el rol (admin, dojo, lector)
+✅ Siga mostrando el botón activo como antes
+✅ Mantenga todo en un solo lugar (más limpio)
+✅ Nueva versión de includes/layout.php con control por rol
+
+<?php
+$current = basename($_SERVER['SCRIPT_NAME']);
+$rol = $rol_actual ?? null;
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Aikido</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        .menu {
+            margin-bottom: 20px;
+        }
+        .menu a {
+            text-decoration: none;
+            color: #007bff;
+            margin-right: 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        .menu a:hover {
+            background-color: #e6f0ff;
+        }
+        .menu a.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <div class="menu">
+            <a href="menu.php" class="<?= $current === 'menu.php' ? 'active' : '' ?>">🏠 Menú</a>
+            <a href="index.php" class="<?= $current === 'index.php' ? 'active' : '' ?>">👥 Personas</a>
+
+            <?php if ($rol === 'admin'): ?>
+                <a href="dojos.php" class="<?= $current === 'dojos.php' ? 'active' : '' ?>">🏯 Dojos</a>
+                <a href="usuarios.php" class="<?= $current === 'usuarios.php' ? 'active' : '' ?>">👤 Usuarios</a>
+            <?php endif; ?>
+
+            <?php if (in_array($rol, ['admin', 'dojo'])): ?>
+                <a href="cuotas.php" class="<?= $current === 'cuotas.php' ? 'active' : '' ?>">💰 Cuotas</a>
+                <a href="grados.php" class="<?= $current === 'grados.php' ? 'active' : '' ?>">🎓 Grados</a>
+            <?php endif; ?>
+
+            <a href="logout.php">🚪 Cerrar sesión</a>
+        </div>
+
+        <?= $contenido ?? '' ?>
+    </div>
+</body>
+</html>
+
+👁️ Visibilidad por rol
+Enlace	admin	dojo	lector
+Personas	✅	✅	✅
+Dojos	✅	❌	❌
+Usuarios	✅	❌	❌
+Cuotas	✅	✅	❌
+Grados	✅	✅	❌
+
+¿Querés que el sistema devuelva un mensaje si alguien accede directamente a una sección que no le corresponde según su rol?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a agregar protección por rol a nivel de cada página para que:
+
+✅ Solo accedan los roles permitidos
+✅ Se muestre un mensaje si el acceso está denegado
+✅ Se pueda aplicar fácilmente en cualquier archivo
+✅ 1. Crear función para validar rol
+
+Agregá este bloque a includes/auth.php o a un nuevo archivo tipo includes/rol.php:
+
+<?php
+function requiere_rol($roles_permitidos) {
+    global $rol_actual;
+    if (!in_array($rol_actual, (array)$roles_permitidos)) {
+        echo "<h3>❌ Acceso denegado. No tenés permiso para ver esta sección.</h3>";
+        exit;
+    }
+}
+
+    Esto detiene la ejecución si el rol actual no está en la lista permitida.
+
+✅ 2. Usar la función en cada página restringida
+Ejemplo: usuarios.php (solo admin)
+
+<?php
+include('../includes/auth.php');
+require_once('../includes/rol.php');
+
+requiere_rol(['admin']); // Solo admins pueden entrar
+
+// Resto del contenido
+
+Ejemplo: grados.php (admin y dojo)
+
+<?php
+include('../includes/auth.php');
+require_once('../includes/rol.php');
+
+requiere_rol(['admin', 'dojo']);
+
+// Resto del contenido
+
+🔁 Ventajas
+
+    Te asegurás de que nadie acceda por URL a páginas que no debería ver.
+
+    El sistema sigue mostrando el menú correctamente, pero restringe contenido real.
+
+    Si en el futuro querés redirigir en lugar de mostrar mensaje, solo cambiás en un solo lugar.
+
+¿Querés que te genere un zip con rol.php y una página de ejemplo protegida?
+

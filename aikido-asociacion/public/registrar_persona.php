@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if (!in_array($rol_actual, ['admin', 'dojo'])) {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin', 'dojo']);
 
 // Obtener lista de dojos (solo si es admin)
 $dojos = [];
@@ -64,3 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 
 <p><a href="index.php">Volver al listado</a></p>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

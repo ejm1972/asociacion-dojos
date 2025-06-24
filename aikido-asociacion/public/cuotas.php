@@ -1,11 +1,9 @@
-<?php include('../includes/auth.php'); ?>
-<?php include('../config/db.php'); ?>
+<?php 
+include('../includes/auth.php');
+include('../config/db.php');
+require_once('../includes/rol.php');
 
-<?php
-if (!in_array($rol_actual, ['admin', 'dojo'])) {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin', 'dojo']);
 
 // filtrar personas por rol
 if ($rol_actual === 'admin') {
@@ -38,6 +36,8 @@ $cuotas = $pdo->query("
     INNER JOIN personas p ON c.persona_id = p.id
     ORDER BY c.fecha_pago DESC
 ")->fetchAll();
+
+ob_start();
 ?>
 
 <h2>Registrar pago</h2>
@@ -80,3 +80,7 @@ $cuotas = $pdo->query("
         </tr>
     <?php endforeach; ?>
 </table>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

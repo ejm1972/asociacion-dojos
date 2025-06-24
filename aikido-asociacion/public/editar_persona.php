@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if (!in_array($rol_actual, ['admin', 'dojo'])) {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin', 'dojo']);
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");
@@ -41,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Obtener dojos para el select
 $dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
+
+ob_start();
 ?>
 
 <h2>Editar Persona</h2>
@@ -58,3 +58,7 @@ $dojos = $pdo->query("SELECT * FROM dojos")->fetchAll();
     </select><br>
     <button type="submit">Guardar cambios</button>
 </form>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

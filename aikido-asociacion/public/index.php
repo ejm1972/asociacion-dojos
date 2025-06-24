@@ -1,6 +1,7 @@
-<?php include('../includes/auth.php'); ?>
-<?php include('../config/db.php'); ?>
-<?php
+<?php 
+include('../includes/auth.php');
+include('../config/db.php');
+
 if ($rol_actual === 'dojo') {
     $stmt = $pdo->prepare("
         SELECT p.*, d.nombre AS dojo,
@@ -29,6 +30,8 @@ if ($rol_actual === 'dojo') {
         ORDER BY p.apellido, p.nombre
     ")->fetchAll();
 }
+
+ob_start();
 ?>
 
 <a href="logout.php">Cerrar sesión</a>
@@ -62,3 +65,7 @@ if ($rol_actual === 'dojo') {
         </tr>
     <?php endforeach; ?>
 </table>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

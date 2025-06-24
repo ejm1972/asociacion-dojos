@@ -1,11 +1,9 @@
-<?php include('../includes/auth.php'); ?>
-<?php include('../config/db.php'); ?>
+<?php 
+include('../includes/auth.php');
+include('../config/db.php');
+require_once('../includes/rol.php');
 
-<?php
-if (!in_array($rol_actual, ['admin', 'dojo'])) {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin', 'dojo']);
 
 if ($rol_actual === 'admin') {
     $personas = $pdo->query("SELECT * FROM personas")->fetchAll();
@@ -32,6 +30,8 @@ $historial = $pdo->query("
     INNER JOIN personas p ON g.persona_id = p.id
     ORDER BY g.fecha_otorgamiento DESC
 ")->fetchAll();
+
+ob_start();
 ?>
 
 <h2>Registrar grado</h2>
@@ -68,3 +68,6 @@ $historial = $pdo->query("
     <?php endforeach; ?>
 </table>
 
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

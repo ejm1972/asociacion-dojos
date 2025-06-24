@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if ($rol_actual !== 'admin') {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin']);
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
@@ -43,6 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: usuarios.php");
     exit;
 }
+
+ob_start();
 ?>
 
 <h2>Editar usuario</h2>
@@ -75,3 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 
 <p><a href="usuarios.php">Volver al listado</a></p>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

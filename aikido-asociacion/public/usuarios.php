@@ -1,11 +1,10 @@
-<?php include('../includes/auth.php'); ?>
-<?php include('../config/db.php'); ?>
+<?php 
+include('../includes/auth.php');
+include('../config/db.php');
+require_once('../includes/rol.php');
 
-<?php
-if ($rol_actual !== 'admin') {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin']);
+
 
 // obtener lista de usuarios
 $usuarios = $pdo->query("
@@ -52,6 +51,8 @@ if (isset($_GET['editar'])) {
     $stmt->execute([$_GET['editar']]);
     $editar = $stmt->fetch();
 }
+
+ob_start();
 ?>
 
 <h2>Usuarios</h2>
@@ -105,3 +106,7 @@ if (isset($_GET['editar'])) {
 
     <button type="submit"><?= $editar ? "Actualizar" : "Crear" ?></button>
 </form>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

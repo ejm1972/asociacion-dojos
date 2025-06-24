@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if ($rol_actual !== 'admin') {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $pdo->prepare("INSERT INTO dojos (nombre, ciudad, pais) VALUES (?, ?, ?)");
@@ -34,3 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 
 <p><a href="dojos.php">Volver al listado</a></p>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');

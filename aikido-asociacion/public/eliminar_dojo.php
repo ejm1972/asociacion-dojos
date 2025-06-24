@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if ($rol_actual !== 'admin') {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin']);
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");

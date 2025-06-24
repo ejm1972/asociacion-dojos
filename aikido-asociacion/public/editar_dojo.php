@@ -1,11 +1,9 @@
 <?php
 include('../includes/auth.php');
 include('../config/db.php');
+require_once('../includes/rol.php');
 
-if ($rol_actual !== 'admin') {
-    echo "Acceso denegado.";
-    exit;
-}
+requiere_rol(['admin']);
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");
@@ -34,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: index.php");
     exit;
 }
+
+ob_start();
 ?>
 
 <h2>Editar Dojo</h2>
@@ -49,3 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <button type="submit">Guardar cambios</button>
 </form>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');
