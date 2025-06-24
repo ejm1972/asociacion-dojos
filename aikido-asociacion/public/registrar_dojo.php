@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: dojos.php");
     exit;
 }
+
+ob_start();
 ?>
 
 <h2>Registrar nuevo dojo</h2>

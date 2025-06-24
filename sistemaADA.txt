@@ -2268,3 +2268,536 @@ requiere_rol(['admin', 'dojo']);
 
 ¿Querés que te genere un zip con rol.php y una página de ejemplo protegida?
 
+con el ultimo laout queda el menú en 2 renglones
+ChatGPT dijo:
+
+Gracias por notarlo, Eduardo. Eso sucede porque el menú está en una sola línea horizontal, y cuando hay muchos ítems o se reducen los márgenes, algunos enlaces bajan al segundo renglón.
+
+Vamos a solucionarlo con dos enfoques combinados:
+✅ Solución A: Que el menú se adapte y “salte línea bien”
+
+Agregamos flex-wrap para que se vea ordenado cuando no entra en una sola fila.
+
+.menu {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap; /* permite múltiples líneas */
+    gap: 10px;
+}
+
+✅ Solución B: Reducir padding y márgenes para que entre mejor
+
+.menu a {
+    padding: 4px 10px;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+✅ Versión mejorada del bloque CSS completo
+
+Reemplazá en layout.php esta parte:
+
+.menu {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.menu a {
+    text-decoration: none;
+    color: #007bff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+.menu a:hover {
+    background-color: #e6f0ff;
+}
+.menu a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+🧪 Resultado
+
+    Se verá en una fila si entra.
+
+    Si no entra, pasará a una segunda fila con espaciado parejo.
+
+    Más estético y responsivo.
+
+¿Querés que lo pase directamente al ZIP para reemplazar el layout anterior?
+Dijiste:
+para que ocupe todo el ancho disponible?
+ChatGPT dijo:
+
+¡Perfecto! Si querés que el menú ocupe todo el ancho del panel, podemos hacer esto:
+✅ Actualización final del menú para ocupar todo el ancho
+🔧 Cambios clave:
+
+    Hacer que .menu use display: flex; y justify-content: space-between o flex-wrap con gap.
+
+    Asegurar que .menu use width: 100%.
+
+    El .panel puede mantenerse centrado, pero el menú se adapta al ancho.
+
+🎯 Código CSS actualizado para layout.php
+
+Reemplazá la sección del menú por esto:
+
+.menu {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+    justify-content: flex-start; /* o space-between si querés más separación */
+}
+.menu a {
+    flex: 1 0 auto;
+    text-decoration: none;
+    color: #007bff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    text-align: center;
+    min-width: 90px;
+}
+.menu a:hover {
+    background-color: #e6f0ff;
+}
+.menu a.active {
+    background-color: #007bff;
+    color: white;
+}
+
+🧪 ¿Qué hace esto?
+
+    Cada botón del menú se adapta al ancho disponible, manteniendo orden.
+
+    Si hay muchos ítems, se distribuyen bien y saltan línea si es necesario.
+
+    Visualmente se ve más limpio y moderno sin sacrificar responsividad.
+
+¿Querés que actualice layout.php con este estilo y te lo empaquete como ZIP?
+Dijiste:
+agregarle layout al login
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a integrar el formulario de login dentro del layout.php, para que tenga el mismo estilo que el resto del sistema.
+✅ Versión con layout: login.php
+
+<?php
+session_start();
+require_once('../config/db.php');
+
+// Procesar login
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE username = ?");
+    $stmt->execute([$_POST['username']]);
+    $usuario = $stmt->fetch();
+
+    if ($usuario && password_verify($_POST['password'], $usuario['password'])) {
+        $_SESSION['usuario'] = $usuario['username'];
+        $_SESSION['rol'] = $usuario['rol'];
+        $_SESSION['dojo_id'] = $usuario['dojo_id'] ?? null;
+        header("Location: menu.php");
+        exit;
+    } else {
+        $error = "Usuario o contraseña incorrectos.";
+    }
+}
+
+// Contenido visual
+ob_start();
+?>
+
+<h2>Iniciar sesión</h2>
+
+<?php if ($error): ?>
+    <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+<?php endif; ?>
+
+<form method="post">
+    <label>Usuario:</label><br>
+    <input type="text" name="username" required><br><br>
+
+    <label>Contraseña:</label><br>
+    <input type="password" name="password" required><br><br>
+
+    <button type="submit">Entrar</button>
+</form>
+
+<?php
+$contenido = ob_get_clean();
+include('../includes/layout.php');
+
+🧩 ¿Por qué funciona?
+
+    Usa el mismo layout.php, así el formulario está visualmente integrado.
+
+    El panel se centra, como en las demás pantallas.
+
+    El menú no aparece porque el usuario aún no está autenticado (si auth.php no se incluye, el menú sigue visible pero sin sesión, podés ocultarlo también si querés).
+
+💡 ¿Querés ocultar la barra del menú cuando no hay usuario logueado?
+
+Puedo modificar layout.php para que la barra de navegación solo aparezca si $_SESSION['usuario'] está presente. ¿Lo hacemos?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a modificar layout.php para que:
+
+✅ Muestre la barra de navegación solo si el usuario está logueado
+✅ Permita que páginas como login.php usen el mismo diseño sin mostrar el menú
+✅ Versión final de includes/layout.php con menú condicional
+
+<?php
+session_start();
+$current = basename($_SERVER['SCRIPT_NAME']);
+$rol = $_SESSION['rol'] ?? null;
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Aikido</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .panel {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+        .panel h2 {
+            margin-top: 0;
+        }
+        .menu {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+            justify-content: flex-start;
+        }
+        .menu a {
+            flex: 1 0 auto;
+            text-decoration: none;
+            color: #007bff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-align: center;
+            min-width: 90px;
+        }
+        .menu a:hover {
+            background-color: #e6f0ff;
+        }
+        .menu a.active {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <?php if (isset($_SESSION['usuario'])): ?>
+        <div class="menu">
+            <a href="menu.php" class="<?= $current === 'menu.php' ? 'active' : '' ?>">🏠 Menú</a>
+            <a href="index.php" class="<?= $current === 'index.php' ? 'active' : '' ?>">👥 Personas</a>
+
+            <?php if ($rol === 'admin'): ?>
+                <a href="dojos.php" class="<?= $current === 'dojos.php' ? 'active' : '' ?>">🏯 Dojos</a>
+                <a href="usuarios.php" class="<?= $current === 'usuarios.php' ? 'active' : '' ?>">👤 Usuarios</a>
+            <?php endif; ?>
+
+            <?php if (in_array($rol, ['admin', 'dojo'])): ?>
+                <a href="cuotas.php" class="<?= $current === 'cuotas.php' ? 'active' : '' ?>">💰 Cuotas</a>
+                <a href="grados.php" class="<?= $current === 'grados.php' ? 'active' : '' ?>">🎓 Grados</a>
+            <?php endif; ?>
+
+            <a href="logout.php">🚪 Cerrar sesión</a>
+        </div>
+        <?php endif; ?>
+
+        <?= $contenido ?? '' ?>
+    </div>
+</body>
+</html>
+
+🔐 Resultado
+
+    El menú solo se ve si hay sesión iniciada.
+
+    Páginas como login.php usan el mismo estilo sin barra de navegación.
+
+    Si querés mostrar el nombre del usuario o su dojo también se puede añadir.
+
+¿Querés que empaquete este layout.php actualizado con login.php también listo?
+Dijiste:
+me aparece esto depués deaplicar el cambio
+Notice
+: session_start(): Ignoring session_start() because a session is already active in
+/var/www/html/includes/layout.php
+on line
+2
+ChatGPT dijo:
+
+Perfecta observación, Eduardo.
+
+Ese Notice aparece porque en alguna parte (por ejemplo, login.php) ya se llamó a session_start(), y después layout.php lo vuelve a hacer. PHP no permite iniciar la sesión dos veces.
+✅ Soluciones posibles
+✅ Opción 1: Quitar session_start() de layout.php
+
+(Si ya se inicia sesión antes, como corresponde)
+
+// En layout.php (remover esto si ya se hace en login.php o auth.php)
+<?php
+// session_start(); ← eliminar esta línea
+$current = basename($_SERVER['SCRIPT_NAME']);
+$rol = $_SESSION['rol'] ?? null;
+?>
+
+➡ Esta es la opción más limpia si todas las páginas ya llaman a session_start() antes de incluir el layout.
+✅ Opción 2: Protegerlo con if (!isset($_SESSION))
+
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$current = basename($_SERVER['SCRIPT_NAME']);
+$rol = $_SESSION['rol'] ?? null;
+?>
+
+➡ Esta es más segura si querés mantener session_start() en el layout como respaldo.
+💡 Recomendación
+
+    Si todas las páginas ya tienen session_start() en auth.php o al principio, usá la Opción 1.
+
+    Si querés que el layout sea más autónomo y nunca dé errores, usá la Opción 2.
+
+¿Querés que actualice y empaquete layout.php con la solución que elijas?
+Dijiste:
+usé la opción 2
+ChatGPT dijo:
+
+Perfecto, Eduardo. Usar la opción 2 (session_status() === PHP_SESSION_NONE) es una excelente forma de evitar el error sin romper nada. Con eso, el layout.php:
+
+✅ No lanza advertencias aunque ya haya una sesión iniciada
+✅ Sigue funcionando igual para páginas como login.php
+✅ Es seguro y reutilizable en cualquier contexto
+
+¿Querés que ahora empaquete layout.php actualizado junto con login.php y el rol.php de control de acceso? Así tenés todo listo en un ZIP para seguir trabajando.
+Dijiste:
+no
+sigo probando y luego vemos algunos cambios
+ChatGPT dijo:
+
+Perfecto, Eduardo. Probá tranquilo. Cuando estés listo para seguir con ajustes, nuevas funciones o empaquetado, avisame y retomamos desde donde dejaste.
+
+¡Éxitos con las pruebas! 🥋💻
+Dijiste:
+en este proyecto hay un esquema.sql para las tablas pero no hay un script para crea la BD
+se puede hacer?
+ChatGPT dijo:
+
+Sí, Eduardo, claro que se puede.
+
+Vamos a complementar el esquema.sql con un script que:
+
+✅ Crea la base de datos
+✅ La selecciona (USE)
+✅ Luego ejecuta las sentencias del esquema (tablas, constraints, etc.)
+🛠 Suponiendo que tenés algo como esto en esquema.sql:
+
+CREATE TABLE dojos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  ciudad VARCHAR(100),
+  pais VARCHAR(100)
+);
+
+CREATE TABLE personas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  apellido VARCHAR(100) NOT NULL,
+  fecha_nacimiento DATE,
+  dojo_id INT,
+  FOREIGN KEY (dojo_id) REFERENCES dojos(id)
+);
+-- etc...
+
+✅ Script para crear base de datos: crear_base.sql
+
+-- Crear base de datos si no existe
+CREATE DATABASE IF NOT EXISTS aikido_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Usar la base
+USE aikido_db;
+
+-- A continuación vendría el contenido de esquema.sql
+-- Podés copiarlo directamente debajo o hacer que tu importador lo ejecute luego
+
+📦 Alternativas
+
+    Fusionar este archivo con esquema.sql y dejar todo en uno.
+
+    Usar crear_base.sql como paso inicial (por ejemplo, con Docker o phpMyAdmin) y luego aplicar esquema.sql.
+
+¿Querés que te genere el archivo completo ya fusionado (creación de DB + tablas), basado en tu esquema actual?
+Dijiste:
+si
+ChatGPT dijo:
+
+Listo, Eduardo. Podés descargar el script SQL completo desde acá:
+
+📄 crear_base_aikido.sql
+
+Incluye:
+
+    Creación de la base aikido_db
+
+    Todas las tablas: dojos, personas, usuarios, cuotas, grados
+
+    Relaciones con claves foráneas y eliminaciones en cascada o con SET NULL
+
+Cuando quieras lo podemos adaptar o expandir con datos iniciales.
+
+al layout.php agregar css para mejorar tablas
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a mejorar la visualización de las tablas HTML en layout.php, para que:
+
+✅ Tengan bordes suaves y espaciado
+✅ Alternen colores de fondo por fila
+✅ Resalten al pasar el mouse
+✅ Se vean claras en pantallas angostas
+🧩 CSS para tablas: agregalo dentro de <style> en layout.php
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+th, td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+tr:hover {
+    background-color: #eef;
+    transition: background-color 0.2s ease;
+}
+
+✅ Resultado visual
+
+    Bordes suaves
+
+    Zebra striping (filas alternas)
+
+    Hover que resalta la fila
+
+    Buen espaciado en texto y columnas
+
+¿Querés que también agregue estilos para botones (<a class="boton">, <button>, etc.) o para mensajes tipo alerta/éxito?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a agregar estilos visuales consistentes también para:
+
+✅ Botones: acciones claras y destacadas
+✅ Alertas: mensajes de error, éxito o información
+
+Todo irá dentro del <style> de tu layout.php.
+🧩 1. Estilos para botones
+
+.boton {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 4px 0;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease;
+}
+
+.boton:hover {
+    background-color: #0056b3;
+}
+
+.boton-eliminar {
+    background-color: #dc3545;
+}
+
+.boton-eliminar:hover {
+    background-color: #b02a37;
+}
+
+👉 Usalo así en HTML:
+
+<a href="editar.php?id=5" class="boton">Editar</a>
+<a href="eliminar.php?id=5" class="boton boton-eliminar">Eliminar</a>
+
+🧩 2. Estilos para alertas / mensajes
+
+.alerta {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 0.95rem;
+}
+
+.alerta-error {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+}
+
+.alerta-exito {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+}
+
+.alerta-info {
+    background-color: #cff4fc;
+    color: #055160;
+    border: 1px solid #b6effb;
+}
+
+👉 Usalo así en HTML:
+
+<div class="alerta alerta-error">Hubo un error al procesar el formulario.</div>
+<div class="alerta alerta-exito">Datos guardados correctamente.</div>
+
+¿Querés que te prepare un fragmento con todos estos estilos listos para copiar-pegar al final del <style> en layout.php?

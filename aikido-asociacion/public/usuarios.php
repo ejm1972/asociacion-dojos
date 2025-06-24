@@ -56,7 +56,7 @@ ob_start();
 ?>
 
 <h2>Usuarios</h2>
-<a href="registrar_usuario.php">➕ Crear nuevo usuario</a>
+<p><a href="registrar_usuario.php">➕ Crear nuevo usuario</a></p>
 <table border="1">
     <tr>
         <th>Usuario</th>

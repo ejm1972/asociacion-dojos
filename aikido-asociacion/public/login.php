@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['rol'] = $usuario['rol'];
         $_SESSION['dojo_id'] = $usuario['dojo_id'] ?? null;
 
-        header("Location: menu.php");
+        header("Location: index.php");
         exit;
     } else {
         $error = "Usuario o contraseña incorrectos.";

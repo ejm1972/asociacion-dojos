@@ -1,6 +1,9 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $current = basename($_SERVER['SCRIPT_NAME']);
-$rol = $rol_actual ?? null;
+$rol = $_SESSION['rol'] ?? null;
 ?>
 <!DOCTYPE html>
 <html>
@@ -20,11 +23,11 @@ $rol = $rol_actual ?? null;
         }
         .panel {
             background: white;
-            padding: 20px 30px;
+            padding: 30px 40px;
             border-radius: 10px;
             box-shadow: 0 0 12px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 80%;
+            max-width: 600px;
             box-sizing: border-box;
         }
         .panel h2 {
@@ -36,7 +39,7 @@ $rol = $rol_actual ?? null;
             flex-wrap: wrap;
             gap: 10px;
             width: 100%;
-            justify-content: flex-start; /* o space-between si querés más separación */
+            justify-content: flex-start;
         }
         .menu a {
             flex: 1 0 auto;
@@ -54,10 +57,82 @@ $rol = $rol_actual ?? null;
             background-color: #007bff;
             color: white;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        tr:hover {
+            background-color: #eef;
+            transition: background-color 0.2s ease;
+        }
+        .boton {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px 0;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .boton:hover {
+            background-color: #0056b3;
+        }
+
+        .boton-eliminar {
+            background-color: #dc3545;
+        }
+
+        .boton-eliminar:hover {
+            background-color: #b02a37;
+        }
+        .alerta {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .alerta-error {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+
+        .alerta-exito {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .alerta-info {
+            background-color: #cff4fc;
+            color: #055160;
+            border: 1px solid #b6effb;
+        }
     </style>
 </head>
 <body>
     <div class="panel">
+        <?php if (isset($_SESSION['usuario'])): ?>
         <div class="menu">
             <a href="menu.php" class="<?= $current === 'menu.php' ? 'active' : '' ?>">🏠 Menú</a>
             <a href="index.php" class="<?= $current === 'index.php' ? 'active' : '' ?>">👥 Personas</a>
@@ -74,6 +149,7 @@ $rol = $rol_actual ?? null;
 
             <a href="logout.php">🚪 Cerrar sesión</a>
         </div>
+        <?php endif; ?>
 
         <?= $contenido ?? '' ?>
     </div>

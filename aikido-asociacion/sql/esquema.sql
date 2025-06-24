@@ -1,3 +1,10 @@
+-- Crear base de datos si no existe
+CREATE DATABASE IF NOT EXISTS aikido_asociacion CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Usar la base
+USE aikido_asociacion;
+
+-- A continuación crear el contenido
 CREATE TABLE dojos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,

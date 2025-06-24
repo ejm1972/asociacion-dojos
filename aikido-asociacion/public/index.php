@@ -34,7 +34,6 @@ if ($rol_actual === 'dojo') {
 ob_start();
 ?>
 
-<a href="logout.php">Cerrar sesión</a>
 <h2>Listado de Personas</h2>
 <p><a href="registrar_persona.php">➕ Crear nueva persona</a></p>
 <table border="1">
@@ -61,6 +60,8 @@ ob_start();
             <td>
                 <a href="editar_persona.php?id=<?= $p['id'] ?>">Editar</a> |
                 <a href="eliminar_persona.php?id=<?= $p['id'] ?>" onclick="return confirm('¿Eliminar esta persona?')">Eliminar</a>
+                <a href="editar.php?id=5" class="boton">Editar</a>
+                <a href="eliminar.php?id=5" class="boton boton-eliminar">Eliminar</a>
             </td>
         </tr>
     <?php endforeach; ?>

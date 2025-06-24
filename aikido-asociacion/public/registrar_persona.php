@@ -31,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: index.php");
     exit;
 }
+
+ob_start();
 ?>
 
 <h2>Registrar nueva persona</h2>
