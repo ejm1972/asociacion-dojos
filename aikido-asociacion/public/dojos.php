@@ -7,6 +7,11 @@ requiere_rol(['admin']);
 
 $dojos = $pdo->query("SELECT * FROM dojos ORDER BY nombre")->fetchAll();
 
+SELECT d.*, p.nombre AS responsable_nombre, p.apellido AS responsable_apellido
+FROM dojos d
+LEFT JOIN personas p ON d.responsable_admin_id = p.id
+ORDER BY d.nombre;
+
 ob_start();
 ?>
 
@@ -19,6 +24,12 @@ ob_start();
         <th>Ciudad</th>
         <th>País</th>
         <th>Acciones</th>
+
+        <th>Inicio</th>
+<th>Responsable</th>
+<th>Celular</th>
+<th>Mail</th>
+
     </tr>
     <?php foreach ($dojos as $dojo): ?>
         <tr>
@@ -30,6 +41,12 @@ ob_start();
                 <a href="editar_dojo.php?id=<?= $dojo['id'] ?>">Editar</a> |
                 <a href="eliminar_dojo.php?id=<?= $dojo['id'] ?>" onclick="return confirm('¿Eliminar este dojo?')">Eliminar</a>
             </td>
+
+            <td><?= $dojo['fecha_inicio'] ?></td>
+<td><?= $dojo['responsable_nombre'] . ' ' . $dojo['responsable_apellido'] ?></td>
+<td><?= $dojo['celular'] ?></td>
+<td><?= $dojo['mail'] ?></td>
+
         </tr>
     <?php endforeach; ?>
 </table>

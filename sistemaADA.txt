@@ -3396,6 +3396,7 @@ si
 ChatGPT dijo:
 
 Perfecto. Acá tenés consultas SQL prácticas que podés usar directamente para interactuar con tu nueva estructura de datos.
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Listar todos los instructores de un dojo (por nombre)
 
 SELECT
@@ -3454,6 +3455,8 @@ Estas consultas te van a servir para armar reportes, dashboards o vistas web má
 
 ¿Querés que prepare también una vista SQL (CREATE VIEW) para resumir esto en una sola tabla consultable?
 Dijiste:
+
+-----------------------------------------------------------------------------------------------------------------------------------
 si
 ChatGPT dijo:
 
@@ -3505,6 +3508,8 @@ Rosario Dojo	Rosario	Pérez, 4º Dan	Gómez	...
     Muestra una fila por cada instructor principal por dojo, pero también puede mostrar NULL si aún no hay asignado.
 
 ¿Querés una segunda vista más detallada para todos los instructores (no solo principal) por dojo?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -3550,6 +3555,8 @@ en texto para copiar y pegar
 ChatGPT dijo:
 
 Perfecto, Eduardo. A continuación te dejo los tres bloques bien organizados, listos para copiar y pegar:
+
+-----------------------------------------------------------------------------------------------------------------------------------
 📦 1. Esquema completo: Tablas + claves foráneas
 
 -- Tabla personas
@@ -3600,6 +3607,7 @@ CREATE TABLE IF NOT EXISTS instructores_por_dojo (
 
     Si más adelante querés triggers para auditar o validar duplicados, los agregamos también.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 📊 2. Vistas: para facilitar reportes y consultas
 
 -- Vista completa con dojo + responsable + instructor principal
@@ -3703,10 +3711,13 @@ LEFT JOIN personas p ON d.responsable_admin_id = p.id;
 
 ¿Querés que prepare también un conjunto de INSERT INTO con datos ficticios para probar esta estructura?
 
+-----------------------------------------------------------------------------------------------------------------------------------
 si
 ChatGPT dijo:
 
 Perfecto, Eduardo. Acá te dejo una serie de INSERT ficticios para poblar las tablas personas, dojos e instructores_por_dojo y poder probar la estructura completa.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Insertar personas (instructores y responsables)
 
 INSERT INTO personas (nombre, apellido, email, telefono)
@@ -3771,6 +3782,7 @@ SELECT * FROM vista_instructores_por_dojo;
 
 ¿Querés que también prepare datos ficticios para practicantes, o por ahora lo dejamos solo con instructores y dojos?
 
+-----------------------------------------------------------------------------------------------------------------------------------
 agregar estos nuevos datos de dojos al proyecto php
 para copiar y pegar, no exportar archivos
 ChatGPT dijo:
@@ -3783,6 +3795,7 @@ Perfecto. Vamos a integrar los nuevos campos del dojo al proyecto PHP actual. A 
 
     Mostrarlos en la vista de listado si querés
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Campos HTML nuevos en el formulario dojo
 
 📄 En crear_dojo.php o editar_dojo.php, agregá esto dentro del <form>:
@@ -3816,6 +3829,7 @@ Perfecto. Vamos a integrar los nuevos campos del dojo al proyecto PHP actual. A 
 <label>Observaciones:</label><br>
 <textarea name="observaciones" rows="3" cols="40"></textarea><br>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Guardar esos campos en el backend (ej: procesar_dojo.php)
 
 $fecha_inicio = $_POST['fecha_inicio'] ?? null;
@@ -3842,6 +3856,7 @@ $stmt->execute([
 
     ⚠️ Asegurate de tener cargadas las personas en $personas (desde SELECT * FROM personas) antes de usar el <select>.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 3. En el listado de dojos (opcional)
 
 📄 En listar_dojos.php, podés agregar columnas nuevas:
@@ -3859,6 +3874,8 @@ Y al mostrar los datos (si hacés JOIN con personas):
 <td><?= $dojo['mail'] ?></td>
 
 ¿Querés que te prepare el bloque de SELECT * con JOIN ya armado para mostrar los dojos con nombre de responsable?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 este proyecto ya tiene 
 dojos.php
@@ -3869,6 +3886,8 @@ necesito integrar los nuevos datos y relaciones a los archivos php ya definidos 
 ChatGPT dijo:
 
 Perfecto. Vamos a adaptar tu proyecto actual PHP integrando los nuevos campos y relaciones en los archivos existentes:
+
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. registrar_dojo.php
 🔁 Reemplazá el formulario actual o agregá estos campos al final:
 
@@ -3902,6 +3921,7 @@ Perfecto. Vamos a adaptar tu proyecto actual PHP integrando los nuevos campos y 
 <label>Observaciones:</label><br>
 <textarea name="observaciones" rows="3" cols="40"></textarea><br>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧠 Asegurate de actualizar el INSERT INTO:
 
 $sql = "INSERT INTO dojos (
@@ -3917,6 +3937,7 @@ $stmt->execute([
     $_POST['responsable_admin_id'], $_POST['celular'], $_POST['mail'], $_POST['observaciones']
 ]);
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. editar_dojo.php
 🔁 Cargá los nuevos campos desde la base:
 
@@ -3961,6 +3982,7 @@ $obs = $dojo['observaciones'];
 <label>Observaciones:</label><br>
 <textarea name="observaciones" rows="3" cols="40"><?= $obs ?></textarea><br>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔁 En el UPDATE asegurate de incluir los campos:
 
 $sql = "UPDATE dojos SET
@@ -3977,6 +3999,7 @@ $stmt->execute([
     $_POST['id']
 ]);
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 3. dojos.php (listado)
 🔁 Agregá columnas nuevas si querés mostrar info adicional:
 
@@ -3992,6 +4015,7 @@ $stmt->execute([
 <td><?= $dojo['celular'] ?></td>
 <td><?= $dojo['mail'] ?></td>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔁 Asegurate de hacer un JOIN con la tabla personas:
 
 SELECT d.*, p.nombre AS responsable_nombre, p.apellido AS responsable_apellido
@@ -3999,11 +4023,14 @@ FROM dojos d
 LEFT JOIN personas p ON d.responsable_admin_id = p.id
 ORDER BY d.nombre;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 4. eliminar_dojo.php
 
 No hace falta modificar nada, ya que los nuevos campos se eliminan junto con el dojo.
 
 ¿Querés que prepare ahora el mismo tipo de integración para instructores_por_dojo (formulario, alta y edición)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -4016,6 +4043,7 @@ Perfecto, Eduardo. Vamos a integrar la tabla instructores_por_dojo en tu proyect
 
     Fecha desde la que cumple ese rol
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Nuevo archivo: asignar_instructor.php
 
 Usalo para asignar instructores a un dojo.
@@ -4069,6 +4097,7 @@ $personas = $pdo->query("SELECT id, nombre, apellido FROM personas ORDER BY apel
     <button type="submit">Asignar Instructor</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Nuevo archivo: procesar_asignacion_instructor.php
 
 <?php
@@ -4090,6 +4119,7 @@ $stmt->execute([$dojo_id, $persona_id, $rol, $grado, $desde_fecha]);
 header("Location: editar_dojo.php?id=$dojo_id");
 exit;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 3. En editar_dojo.php: mostrar instructores asignados
 
 📍 Después del formulario, agregá esto para listar instructores actuales:
@@ -4135,6 +4165,8 @@ if ($instructores):
     Agregar validación para no repetir “principal” en un dojo si ya hay uno
 
 ¿Querés que armemos ahora también esa eliminación de instructores y/o una validación para evitar duplicados de rol principal por dojo?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -4153,6 +4185,7 @@ Dentro del <td> final de cada fila:
 
 SELECT ipd.id, p.nombre, p.apellido, ipd.rol, ipd.grado, ipd.desde_fecha
 
+-----------------------------------------------------------------------------------------------------------------------------------
 📄 B. Nuevo archivo: eliminar_instructor.php
 
 <?php
@@ -4169,6 +4202,7 @@ if ($id && $dojo_id) {
 header("Location: editar_dojo.php?id=$dojo_id");
 exit;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Evitar más de un rol 'principal' por dojo
 📄 En procesar_asignacion_instructor.php, antes del INSERT, agregá:
 

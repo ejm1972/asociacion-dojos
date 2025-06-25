@@ -1382,3 +1382,863 @@ DELIMITER ;
     O una guía de migración desde Excel a esta base?
 
 Puedo ayudarte con eso también.
+
+Tengo otro chat donde fuimos generando proyecto registros Aikido PHP
+podemos juntar estas definiciones de tablas con lo definido en él?
+ChatGPT dijo:
+
+¡Sí, claro! Podemos unificar todas las definiciones del esquema de base de datos que trabajaste en este chat con lo que ya venías desarrollando en el proyecto PHP para registros de Aikido.
+
+Para eso necesito una de estas opciones:
+
+    🔁 Que me pegues aquí el contenido del esquema anterior (si lo tenés como schema.sql, dump o incluso parte del código PHP con migraciones o consultas).
+
+    📎 O que me subas un archivo .sql, .txt, .php, etc. desde ese otro proyecto.
+
+Una vez que lo tenga, puedo:
+
+    Detectar y resolver duplicaciones o inconsistencias.
+
+    Unificar en un solo esquema coherente y listo para usar.
+
+    (Opcional) Generar una versión con INSERT de ejemplo o estructura para migración desde planillas.
+
+¿Querés subir el archivo o pegar el esquema del otro proyecto acá?
+Dijiste:
+voy a pegar los archivos del proyecto de código php para adaptarlo al esquema de este chat
+ChatGPT dijo:
+
+Perfecto, cuando pegues o subas los archivos del proyecto PHP, te ayudo a:
+
+    Adaptar el código al esquema SQL completo y normalizado que definimos aquí.
+
+    Ajustar los nombres de tablas, claves foráneas, y consultas si hace falta.
+
+    Mejorar seguridad y estructura si hay acceso directo a SQL o formularios.
+
+Podés comenzar por subir:
+
+    Los archivos .php que contienen formularios, inserts, updates o listados.
+
+    O bien pegar directamente el contenido de controladores o scripts SQL embebidos.
+
+Estoy listo para ayudarte con eso. 💪
+Dijiste:
+voy a cambiar 
+te pido lo que ofreciste antes, Un script de carga de ejemplo (INSERT) pero en codigo para copiar
+ChatGPT dijo:
+
+¡Perfecto! Acá tenés un script de carga de ejemplo en SQL con INSERT, adaptado al esquema que definimos para tu sistema de Aikido. Incluye datos básicos para:
+
+    2 personas
+
+    1 dojo
+
+    Relación persona-dojo
+
+    Instructor en el dojo
+
+    Graduación
+
+    Cuota pagada
+
+    Asistencia mensual
+
+🧩 Script de carga de ejemplo (INSERT)
+
+-- Personas
+INSERT INTO personas (nombre_completo, dni, fecha_nacimiento, email, telefono)
+VALUES
+('Juan Pérez', '12345678', '1990-03-15', 'juan@example.com', '1111-1111'),
+('Laura Gómez', '23456789', '1985-07-22', 'laura@example.com', '2222-2222');
+
+-- Dojo
+INSERT INTO dojos (nombre, ciudad, provincia, pais, direccion, fecha_inicio, rama_dependencia, fecha_ingreso_ada, celular, mail)
+VALUES
+('Dojo Central', 'Buenos Aires', 'Buenos Aires', 'Argentina', 'Av. Siempre Viva 123', '2010-01-01', 'Shimbukan', '2012-05-15', '1134567890', 'dojo@central.com');
+
+-- Relación: Juan Pérez es instructor principal desde 2020
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+(1, 1, 'principal', '3er Dan', '2020-03-01');
+
+-- Participación: Laura Gómez participa en Dojo Central desde 2023
+INSERT INTO personas_por_dojo (persona_id, dojo_id, desde_fecha)
+VALUES
+(2, 1, '2023-02-01');
+
+-- Historial de graduaciones
+INSERT INTO historial_graduaciones (persona_id, fecha, graduacion, dojo_id, instructor_id, observaciones)
+VALUES
+(2, '2024-11-15', '5º Kyu', 1, 1, 'Primer examen exitoso');
+
+-- Cuota de marzo 2025 pagada por Laura
+INSERT INTO cuotas (persona_id, fecha_pago, periodo_mes, periodo_anio, monto, metodo_pago)
+VALUES
+(2, '2025-03-10', 3, 2025, 4500.00, 'transferencia');
+
+-- Asistencia mensual en marzo 2025 para Laura
+INSERT INTO asistencia_mensual (persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id)
+VALUES
+(2, 1, 3, 2025, 7, 'Buena asistencia en marzo', 1);
+
+✅ Resultado
+
+Con este script, tendrás cargado:
+
+    2 personas (Juan y Laura)
+
+    Un dojo (“Dojo Central”)
+
+    Juan como instructor principal
+
+    Laura como practicante, con:
+
+        Participación en dojo
+
+        Una graduación
+
+        Una cuota pagada
+
+        Un registro de asistencia mensual
+
+¿Querés que te prepare también un set de DELETE para limpiar todo, o una versión con más personas y graduaciones variadas?
+Dijiste:
+una versión con mas personas y graduaciones variadas
+ChatGPT dijo:
+
+Perfecto. Aquí tenés una versión extendida con más personas, distintas graduaciones, cuotas y asistencia. Incluye:
+
+    4 personas
+
+    Participaciones en dojo
+
+    Graduaciones variadas (kyu y dan)
+
+    Cuotas y asistencia para varios meses
+
+    Instructor asignado
+
+🧩 Script extendido con más ejemplos
+
+-- Personas
+INSERT INTO personas (id, nombre_completo, dni, fecha_nacimiento, email, telefono)
+VALUES
+(1, 'Juan Pérez', '12345678', '1990-03-15', 'juan@example.com', '1111-1111'),
+(2, 'Laura Gómez', '23456789', '1985-07-22', 'laura@example.com', '2222-2222'),
+(3, 'Carlos Díaz', '34567890', '1980-12-01', 'carlos@example.com', '3333-3333'),
+(4, 'Sofía Ruiz', '45678901', '2000-06-10', 'sofia@example.com', '4444-4444');
+
+-- Dojo
+INSERT INTO dojos (id, nombre, ciudad, provincia, pais, direccion, fecha_inicio, rama_dependencia, fecha_ingreso_ada, celular, mail)
+VALUES
+(1, 'Dojo Central', 'Buenos Aires', 'Buenos Aires', 'Argentina', 'Av. Siempre Viva 123', '2010-01-01', 'Shimbukan', '2012-05-15', '1134567890', 'dojo@central.com');
+
+-- Juan Pérez como instructor principal desde 2020
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+(1, 1, 'principal', '3er Dan', '2020-03-01');
+
+-- Participación en el dojo
+INSERT INTO personas_por_dojo (persona_id, dojo_id, desde_fecha)
+VALUES
+(2, 1, '2023-02-01'),  -- Laura
+(3, 1, '2024-01-15'),  -- Carlos
+(4, 1, '2024-03-01');  -- Sofía
+
+-- Historial de graduaciones
+INSERT INTO historial_graduaciones (persona_id, fecha, graduacion, dojo_id, instructor_id, observaciones)
+VALUES
+(2, '2024-11-15', '5º Kyu', 1, 1, 'Examen inicial'),
+(3, '2022-08-10', '1er Dan', 1, 1, 'Promoción por méritos'),
+(4, '2025-05-20', '6º Kyu', 1, 1, 'Buena técnica básica'),
+(2, '2025-06-01', '4º Kyu', 1, 1, 'Progreso notable desde el anterior');
+
+-- Cuotas pagadas
+INSERT INTO cuotas (persona_id, fecha_pago, periodo_mes, periodo_anio, monto, metodo_pago)
+VALUES
+(2, '2025-03-10', 3, 2025, 4500.00, 'transferencia'),
+(2, '2025-04-10', 4, 2025, 4500.00, 'efectivo'),
+(3, '2025-03-05', 3, 2025, 4500.00, 'efectivo'),
+(4, '2025-04-15', 4, 2025, 4500.00, 'transferencia');
+
+-- Asistencia mensual
+INSERT INTO asistencia_mensual (persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id)
+VALUES
+(2, 1, 3, 2025, 7, 'Buena asistencia', 1),
+(2, 1, 4, 2025, 8, 'Asistió a todas', 1),
+(3, 1, 3, 2025, 6, 'Faltó una semana por viaje', 1),
+(4, 1, 4, 2025, 4, 'Ausencias justificadas por estudios', 1);
+
+✅ Qué tenés ahora:
+Persona	Graduaciones	Cuotas pagadas	Asistencia
+Juan	No especificado	—	— (es instructor)
+Laura	5º Kyu → 4º Kyu	Mar, Abr 2025	Mar, Abr 2025
+Carlos	1er Dan	Mar 2025	Mar 2025
+Sofía	6º Kyu	Abr 2025	Abr 2025
+
+¿Querés que también te prepare un dump .sql completo con estructura + datos para importar en MySQL o phpMyAdmin?
+Dijiste:
+vuelvo a la adaptacions de archivos php
+ChatGPT dijo:
+
+Perfecto. Para ayudarte a adaptar los archivos PHP a este esquema completo, podés empezar de estas formas:
+✅ Opciones para continuar:
+
+    Subí archivos .php del proyecto (los que manejan formularios, inserciones, listados, etc.).
+
+    Pegá acá el código PHP directamente (por ejemplo, el de un formulario de alta, listados de personas, carga de cuotas, etc.).
+
+🔄 ¿Qué puedo hacer con eso?
+
+    Actualizar los nombres de tablas y campos al nuevo esquema (ej. dojos, personas, cuotas, etc.).
+
+    Asegurar que los INSERT respeten claves foráneas y valores válidos.
+
+    Optimizar validaciones y sanitización de entrada.
+
+    Generar funciones reutilizables para insertar registros vinculados (persona + dojo, o persona + cuota).
+
+    (Opcional) Agregar mejoras como SELECT para combos (dojos, instructores, etc.).
+
+Cuando quieras, subí o pegá el primer archivo PHP que quieras adaptar y lo trabajamos juntos.
+Dijiste:
+armar un php para registro de personas según la definición de tablas
+ChatGPT dijo:
+
+Perfecto. A continuación te dejo un formulario PHP completo para registrar personas, adaptado al esquema de tabla personas que definimos juntos.
+
+Incluye:
+
+    Formulario HTML con todos los campos clave
+
+    Manejo seguro de POST
+
+    Inserción en base de datos (mysqli)
+
+    Selección del dojo actual (conectado a la tabla dojos)
+
+✅ 1. Conexión a base de datos (db.php)
+
+<?php
+// db.php
+$mysqli = new mysqli("localhost", "usuario", "contraseña", "basededatos");
+if ($mysqli->connect_errno) {
+    die("Error al conectar a la base de datos: " . $mysqli->connect_error);
+}
+?>
+
+✅ 2. Formulario de registro + inserción (registro_persona.php)
+
+<?php
+require 'db.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $mysqli->prepare("
+        INSERT INTO personas (
+            fecha_inscripcion, nombre_completo, dni, fecha_nacimiento,
+            lugar_nacimiento, sexo, telefono, nacionalidad, email,
+            domicilio_postal, estado_civil, impedimentos_fisicos,
+            fecha_verificacion_mail, observaciones, dojo_actual_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmt->bind_param(
+        "ssssssssssssssi",
+        $_POST['fecha_inscripcion'],
+        $_POST['nombre_completo'],
+        $_POST['dni'],
+        $_POST['fecha_nacimiento'],
+        $_POST['lugar_nacimiento'],
+        $_POST['sexo'],
+        $_POST['telefono'],
+        $_POST['nacionalidad'],
+        $_POST['email'],
+        $_POST['domicilio_postal'],
+        $_POST['estado_civil'],
+        $_POST['impedimentos_fisicos'],
+        $_POST['fecha_verificacion_mail'],
+        $_POST['observaciones'],
+        $_POST['dojo_actual_id']
+    );
+
+    if ($stmt->execute()) {
+        echo "<p>Persona registrada correctamente.</p>";
+    } else {
+        echo "<p>Error: " . $stmt->error . "</p>";
+    }
+
+    $stmt->close();
+}
+
+// Obtener lista de dojos
+$dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
+?>
+
+<h2>Registro de Persona</h2>
+
+<form method="POST">
+    <label>Fecha de inscripción: <input type="date" name="fecha_inscripcion" required></label><br>
+    <label>Nombre completo: <input type="text" name="nombre_completo" required></label><br>
+    <label>DNI: <input type="text" name="dni" required></label><br>
+    <label>Fecha de nacimiento: <input type="date" name="fecha_nacimiento" required></label><br>
+    <label>Lugar de nacimiento: <input type="text" name="lugar_nacimiento"></label><br>
+    <label>Sexo: 
+        <select name="sexo">
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+        </select>
+    </label><br>
+    <label>Teléfono: <input type="text" name="telefono"></label><br>
+    <label>Nacionalidad: <input type="text" name="nacionalidad"></label><br>
+    <label>Email: <input type="email" name="email"></label><br>
+    <label>Domicilio postal: <input type="text" name="domicilio_postal"></label><br>
+    <label>Estado civil: <input type="text" name="estado_civil"></label><br>
+    <label>Impedimentos físicos: <textarea name="impedimentos_fisicos"></textarea></label><br>
+    <label>Fecha verificación email: <input type="date" name="fecha_verificacion_mail"></label><br>
+    <label>Observaciones: <textarea name="observaciones"></textarea></label><br>
+    <label>Dojo actual:
+        <select name="dojo_actual_id">
+            <option value="">-- Seleccionar dojo --</option>
+            <?php while ($dojo = $dojos->fetch_assoc()): ?>
+                <option value="<?= $dojo['id'] ?>"><?= htmlspecialchars($dojo['nombre']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+✅ Este archivo hace:
+
+    Muestra un formulario simple
+
+    Envía los datos por POST
+
+    Inserta en la tabla personas con un prepared statement
+
+    Lista los dojos disponibles desde la base
+
+🔐 Seguridad y mejoras (opcional):
+
+    Validación de campos (cliente y servidor)
+
+    Prevención de Duplicados por DNI
+
+    Manejo de imágenes si vas a cargar firma o DNI
+
+    Integración con un login si solo ciertos usuarios pueden registrar
+
+¿Querés que siga con un módulo para registrar graduaciones, cuotas o asistencia mensual?
+Dijiste:
+Prevención de Duplicados por DNI
+ChatGPT dijo:
+
+Excelente decisión. Para prevenir el registro de personas duplicadas por DNI, vamos a usar dos niveles de validación:
+✅ 1. Restricción a nivel de base de datos
+
+Ya en tu tabla personas, definimos:
+
+dni VARCHAR(15) UNIQUE
+
+    Esto impide automáticamente que se inserte un registro con un dni que ya existe.
+    Pero para que el usuario no reciba un “error feo”, lo complementamos con:
+
+✅ 2. Validación previa en el código PHP
+
+Antes de hacer el INSERT, verificamos si el DNI ya existe y damos un mensaje amigable.
+🔁 Modificá tu PHP así (antes del INSERT):
+
+// Verificar si ya existe el DNI
+$dni = $_POST['dni'];
+$check = $mysqli->prepare("SELECT id FROM personas WHERE dni = ?");
+$check->bind_param("s", $dni);
+$check->execute();
+$check->store_result();
+
+if ($check->num_rows > 0) {
+    echo "<p style='color:red;'>Ya existe una persona registrada con ese DNI.</p>";
+} else {
+    // Insertar si no existe
+    $stmt = $mysqli->prepare("
+        INSERT INTO personas (
+            fecha_inscripcion, nombre_completo, dni, fecha_nacimiento,
+            lugar_nacimiento, sexo, telefono, nacionalidad, email,
+            domicilio_postal, estado_civil, impedimentos_fisicos,
+            fecha_verificacion_mail, observaciones, dojo_actual_id
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmt->bind_param(
+        "ssssssssssssssi",
+        $_POST['fecha_inscripcion'],
+        $_POST['nombre_completo'],
+        $_POST['dni'],
+        $_POST['fecha_nacimiento'],
+        $_POST['lugar_nacimiento'],
+        $_POST['sexo'],
+        $_POST['telefono'],
+        $_POST['nacionalidad'],
+        $_POST['email'],
+        $_POST['domicilio_postal'],
+        $_POST['estado_civil'],
+        $_POST['impedimentos_fisicos'],
+        $_POST['fecha_verificacion_mail'],
+        $_POST['observaciones'],
+        $_POST['dojo_actual_id']
+    );
+
+    if ($stmt->execute()) {
+        echo "<p style='color:green;'>Persona registrada correctamente.</p>";
+    } else {
+        echo "<p style='color:red;'>Error: " . $stmt->error . "</p>";
+    }
+
+    $stmt->close();
+}
+$check->close();
+
+🎯 Resultado
+
+    Si el DNI ya está registrado → muestra un mensaje y no lo inserta.
+
+    Si no está → lo inserta normalmente.
+
+    Evita errores SQL por duplicado.
+
+¿Querés que también agreguemos búsqueda en vivo de persona por DNI (por ejemplo, al tipear)? ¿O un módulo para editar personas existentes?
+Dijiste:
+Manejo de imágenes si vas a cargar firma o DNI
+ChatGPT dijo:
+
+Perfecto. Como tu tabla personas ya tiene campos imagen_dni y firma_digital (tipo TEXT o VARCHAR para rutas de archivos), podemos agregar soporte para subir esos archivos desde el formulario.
+✅ Objetivo
+
+Subir 2 imágenes opcionales:
+
+    📄 Foto del DNI (imagen_dni)
+
+    ✍️ Firma digital (firma_digital)
+
+Se guardan en una carpeta local (por ejemplo, /uploads) y en la base de datos solo se guarda la ruta del archivo.
+🛠 1. Agregá los campos en el formulario
+
+<form method="POST" enctype="multipart/form-data">
+    <!-- ...otros campos... -->
+
+    <label>Foto del DNI: <input type="file" name="imagen_dni" accept="image/*"></label><br>
+    <label>Firma digital: <input type="file" name="firma_digital" accept="image/*"></label><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+🛠 2. Código PHP para guardar las imágenes
+
+Justo antes del INSERT, agregá esto en tu archivo registro_persona.php:
+
+function guardarImagen($campo, $directorio) {
+    if (isset($_FILES[$campo]) && $_FILES[$campo]['error'] === UPLOAD_ERR_OK) {
+        $nombreOriginal = basename($_FILES[$campo]['name']);
+        $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
+        $nuevoNombre = uniqid($campo . "_") . "." . $extension;
+
+        $rutaDestino = $directorio . "/" . $nuevoNombre;
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0755, true);
+        }
+
+        if (move_uploaded_file($_FILES[$campo]['tmp_name'], $rutaDestino)) {
+            return $rutaDestino;
+        }
+    }
+    return null;
+}
+
+$ruta_dni = guardarImagen('imagen_dni', 'uploads/dni');
+$ruta_firma = guardarImagen('firma_digital', 'uploads/firma');
+
+🛠 3. Ajustar el INSERT para guardar rutas
+
+Cambiá el SQL y el bind_param:
+
+$stmt = $mysqli->prepare("
+    INSERT INTO personas (
+        fecha_inscripcion, nombre_completo, dni, fecha_nacimiento,
+        lugar_nacimiento, sexo, telefono, nacionalidad, email,
+        domicilio_postal, estado_civil, impedimentos_fisicos,
+        fecha_verificacion_mail, observaciones, dojo_actual_id,
+        imagen_dni, firma_digital
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
+
+$stmt->bind_param(
+    "ssssssssssssssissss",
+    $_POST['fecha_inscripcion'],
+    $_POST['nombre_completo'],
+    $_POST['dni'],
+    $_POST['fecha_nacimiento'],
+    $_POST['lugar_nacimiento'],
+    $_POST['sexo'],
+    $_POST['telefono'],
+    $_POST['nacionalidad'],
+    $_POST['email'],
+    $_POST['domicilio_postal'],
+    $_POST['estado_civil'],
+    $_POST['impedimentos_fisicos'],
+    $_POST['fecha_verificacion_mail'],
+    $_POST['observaciones'],
+    $_POST['dojo_actual_id'],
+    $ruta_dni,
+    $ruta_firma
+);
+
+✅ Resultado
+
+    El usuario puede subir una foto del DNI y/o la firma.
+
+    Se guardan en /uploads/dni/ y /uploads/firma/.
+
+    En la base de datos se registra la ruta (por ejemplo: uploads/dni/dni_8746a3.png).
+
+🛡 Recomendaciones adicionales
+
+    Verificá que uploads/ tenga permisos de escritura.
+
+    Si usás Apache, protegé con .htaccess si no querés que los archivos sean accesibles directamente.
+
+    Para mostrar luego la imagen: <img src="<?= $persona['imagen_dni'] ?>">.
+
+¿Querés que prepare también un módulo para editar una persona incluyendo reemplazo de las imágenes?
+Dijiste:
+editar una persona incluyendo reemplazo de las imágenes
+ChatGPT dijo:
+
+Perfecto. Te armo un módulo PHP para editar personas, que incluye:
+
+    Formulario prellenado desde la base de datos
+
+    Posibilidad de reemplazar la imagen del DNI y la firma
+
+    Opción de conservar las imágenes si no se suben nuevas
+
+✅ 1. URL: editar_persona.php?id=1
+🛠 Código completo
+
+<?php
+require 'db.php';
+
+$id = intval($_GET['id'] ?? 0);
+
+// 🔹 Cargar persona actual
+$stmt = $mysqli->prepare("SELECT * FROM personas WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$persona = $result->fetch_assoc();
+$stmt->close();
+
+if (!$persona) {
+    die("Persona no encontrada.");
+}
+
+// 🔸 Función para subir imágenes (igual que antes)
+function guardarImagen($campo, $directorio) {
+    if (isset($_FILES[$campo]) && $_FILES[$campo]['error'] === UPLOAD_ERR_OK) {
+        $nombreOriginal = basename($_FILES[$campo]['name']);
+        $extension = pathinfo($nombreOriginal, PATHINFO_EXTENSION);
+        $nuevoNombre = uniqid($campo . "_") . "." . $extension;
+
+        $rutaDestino = $directorio . "/" . $nuevoNombre;
+        if (!is_dir($directorio)) {
+            mkdir($directorio, 0755, true);
+        }
+
+        if (move_uploaded_file($_FILES[$campo]['tmp_name'], $rutaDestino)) {
+            return $rutaDestino;
+        }
+    }
+    return null;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Subir nuevas imágenes si se cargaron
+    $nueva_dni = guardarImagen('imagen_dni', 'uploads/dni') ?: $persona['imagen_dni'];
+    $nueva_firma = guardarImagen('firma_digital', 'uploads/firma') ?: $persona['firma_digital'];
+
+    $stmt = $mysqli->prepare("
+        UPDATE personas SET
+            fecha_inscripcion=?, nombre_completo=?, dni=?, fecha_nacimiento=?,
+            lugar_nacimiento=?, sexo=?, telefono=?, nacionalidad=?, email=?,
+            domicilio_postal=?, estado_civil=?, impedimentos_fisicos=?,
+            fecha_verificacion_mail=?, observaciones=?, dojo_actual_id=?,
+            imagen_dni=?, firma_digital=?
+        WHERE id = ?
+    ");
+
+    $stmt->bind_param(
+        "ssssssssssssssisssi",
+        $_POST['fecha_inscripcion'],
+        $_POST['nombre_completo'],
+        $_POST['dni'],
+        $_POST['fecha_nacimiento'],
+        $_POST['lugar_nacimiento'],
+        $_POST['sexo'],
+        $_POST['telefono'],
+        $_POST['nacionalidad'],
+        $_POST['email'],
+        $_POST['domicilio_postal'],
+        $_POST['estado_civil'],
+        $_POST['impedimentos_fisicos'],
+        $_POST['fecha_verificacion_mail'],
+        $_POST['observaciones'],
+        $_POST['dojo_actual_id'],
+        $nueva_dni,
+        $nueva_firma,
+        $id
+    );
+
+    if ($stmt->execute()) {
+        echo "<p style='color:green;'>Persona actualizada correctamente.</p>";
+        // Recargar datos actualizados
+        header("Location: editar_persona.php?id=$id");
+        exit;
+    } else {
+        echo "<p style='color:red;'>Error: " . $stmt->error . "</p>";
+    }
+
+    $stmt->close();
+}
+
+// Obtener lista de dojos
+$dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
+?>
+
+<h2>Editar Persona</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    <label>Fecha inscripción: <input type="date" name="fecha_inscripcion" value="<?= $persona['fecha_inscripcion'] ?>"></label><br>
+    <label>Nombre completo: <input type="text" name="nombre_completo" value="<?= htmlspecialchars($persona['nombre_completo']) ?>"></label><br>
+    <label>DNI: <input type="text" name="dni" value="<?= $persona['dni'] ?>"></label><br>
+    <label>Fecha nacimiento: <input type="date" name="fecha_nacimiento" value="<?= $persona['fecha_nacimiento'] ?>"></label><br>
+    <label>Lugar nacimiento: <input type="text" name="lugar_nacimiento" value="<?= $persona['lugar_nacimiento'] ?>"></label><br>
+    <label>Sexo: 
+        <select name="sexo">
+            <option <?= $persona['sexo'] === 'Masculino' ? 'selected' : '' ?>>Masculino</option>
+            <option <?= $persona['sexo'] === 'Femenino' ? 'selected' : '' ?>>Femenino</option>
+            <option <?= $persona['sexo'] === 'Otro' ? 'selected' : '' ?>>Otro</option>
+        </select>
+    </label><br>
+    <label>Teléfono: <input type="text" name="telefono" value="<?= $persona['telefono'] ?>"></label><br>
+    <label>Nacionalidad: <input type="text" name="nacionalidad" value="<?= $persona['nacionalidad'] ?>"></label><br>
+    <label>Email: <input type="email" name="email" value="<?= $persona['email'] ?>"></label><br>
+    <label>Domicilio postal: <input type="text" name="domicilio_postal" value="<?= $persona['domicilio_postal'] ?>"></label><br>
+    <label>Estado civil: <input type="text" name="estado_civil" value="<?= $persona['estado_civil'] ?>"></label><br>
+    <label>Impedimentos físicos: <textarea name="impedimentos_fisicos"><?= $persona['impedimentos_fisicos'] ?></textarea></label><br>
+    <label>Verificación de mail: <input type="date" name="fecha_verificacion_mail" value="<?= $persona['fecha_verificacion_mail'] ?>"></label><br>
+    <label>Observaciones: <textarea name="observaciones"><?= $persona['observaciones'] ?></textarea></label><br>
+    <label>Dojo actual:
+        <select name="dojo_actual_id">
+            <option value="">-- Seleccionar dojo --</option>
+            <?php while ($dojo = $dojos->fetch_assoc()): ?>
+                <option value="<?= $dojo['id'] ?>" <?= ($persona['dojo_actual_id'] == $dojo['id']) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($dojo['nombre']) ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+
+    <label>Imagen DNI actual:
+        <?php if ($persona['imagen_dni']): ?>
+            <br><img src="<?= $persona['imagen_dni'] ?>" width="150"><br>
+        <?php endif; ?>
+        Cambiar: <input type="file" name="imagen_dni" accept="image/*">
+    </label><br>
+
+    <label>Firma digital actual:
+        <?php if ($persona['firma_digital']): ?>
+            <br><img src="<?= $persona['firma_digital'] ?>" width="150"><br>
+        <?php endif; ?>
+        Cambiar: <input type="file" name="firma_digital" accept="image/*">
+    </label><br><br>
+
+    <button type="submit">Guardar cambios</button>
+</form>
+
+✅ Este módulo permite:
+
+    Editar todos los campos de la persona
+
+    Ver la imagen del DNI y la firma actual
+
+    Subir nuevas imágenes (opcional)
+
+    Guardar solo si se cambió algo
+
+📁 Estructura de archivos recomendada
+
+/registro_aikido/
+├── db.php
+├── registro_persona.php
+├── editar_persona.php
+├── uploads/
+│   ├── dni/
+│   └── firma/
+
+¿Querés que te prepare también un listado de personas con botón de editar?
+Dijiste:
+módulo para registrar graduaciones, cuotas o asistencia mensual
+ChatGPT dijo:
+
+¡Vamos con eso! A continuación te presento tres módulos PHP separados para:
+
+    Registrar graduaciones
+
+    Registrar cuotas
+
+    Registrar asistencia mensual
+
+Todos los módulos se conectan a la base de datos (db.php) y asumen que ya tenés personas, dojos e instructores.
+✅ 1. registrar_graduacion.php
+
+<?php
+require 'db.php';
+
+$personas = $mysqli->query("SELECT id, nombre_completo FROM personas ORDER BY nombre_completo");
+$dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
+$instructores = $mysqli->query("SELECT p.id, p.nombre_completo 
+    FROM personas p JOIN instructores_por_dojo i ON p.id = i.persona_id 
+    GROUP BY p.id ORDER BY p.nombre_completo");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $mysqli->prepare("
+        INSERT INTO historial_graduaciones (persona_id, fecha, graduacion, dojo_id, instructor_id, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("issiis", $_POST['persona_id'], $_POST['fecha'], $_POST['graduacion'], $_POST['dojo_id'], $_POST['instructor_id'], $_POST['observaciones']);
+    $stmt->execute();
+    echo "<p style='color:green;'>Graduación registrada.</p>";
+}
+?>
+
+<h2>Registrar Graduación</h2>
+<form method="POST">
+    <label>Persona:
+        <select name="persona_id" required>
+            <?php while ($p = $personas->fetch_assoc()): ?>
+                <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['nombre_completo']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Fecha: <input type="date" name="fecha" required></label><br>
+    <label>Graduación: <input type="text" name="graduacion" required></label><br>
+    <label>Dojo:
+        <select name="dojo_id" required>
+            <?php while ($d = $dojos->fetch_assoc()): ?>
+                <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['nombre']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Instructor:
+        <select name="instructor_id" required>
+            <?php while ($i = $instructores->fetch_assoc()): ?>
+                <option value="<?= $i['id'] ?>"><?= htmlspecialchars($i['nombre_completo']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Observaciones: <textarea name="observaciones"></textarea></label><br>
+    <button type="submit">Registrar</button>
+</form>
+
+✅ 2. registrar_cuota.php
+
+<?php
+require 'db.php';
+
+$personas = $mysqli->query("SELECT id, nombre_completo FROM personas ORDER BY nombre_completo");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $mysqli->prepare("
+        INSERT INTO cuotas (persona_id, fecha_pago, periodo_mes, periodo_anio, monto, metodo_pago)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("isiids", $_POST['persona_id'], $_POST['fecha_pago'], $_POST['periodo_mes'], $_POST['periodo_anio'], $_POST['monto'], $_POST['metodo_pago']);
+    $stmt->execute();
+    echo "<p style='color:green;'>Cuota registrada.</p>";
+}
+?>
+
+<h2>Registrar Cuota</h2>
+<form method="POST">
+    <label>Persona:
+        <select name="persona_id" required>
+            <?php while ($p = $personas->fetch_assoc()): ?>
+                <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['nombre_completo']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Fecha de pago: <input type="date" name="fecha_pago" required></label><br>
+    <label>Mes: <input type="number" name="periodo_mes" min="1" max="12" required></label><br>
+    <label>Año: <input type="number" name="periodo_anio" required></label><br>
+    <label>Monto: <input type="number" name="monto" step="0.01" required></label><br>
+    <label>Método de pago:
+        <select name="metodo_pago">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia</option>
+            <option value="otro">Otro</option>
+        </select>
+    </label><br>
+    <button type="submit">Registrar</button>
+</form>
+
+✅ 3. registrar_asistencia.php
+
+<?php
+require 'db.php';
+
+$personas = $mysqli->query("SELECT id, nombre_completo FROM personas ORDER BY nombre_completo");
+$dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
+$registradores = $mysqli->query("SELECT id, nombre_completo FROM personas ORDER BY nombre_completo");
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $stmt = $mysqli->prepare("
+        INSERT INTO asistencia_mensual (persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("iiiisii", $_POST['persona_id'], $_POST['dojo_id'], $_POST['periodo_mes'], $_POST['periodo_anio'], $_POST['cantidad_clases'], $_POST['observaciones'], $_POST['registrado_por_id']);
+    $stmt->execute();
+    echo "<p style='color:green;'>Asistencia registrada.</p>";
+}
+?>
+
+<h2>Registrar Asistencia Mensual</h2>
+<form method="POST">
+    <label>Persona:
+        <select name="persona_id" required>
+            <?php while ($p = $personas->fetch_assoc()): ?>
+                <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['nombre_completo']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Dojo:
+        <select name="dojo_id" required>
+            <?php while ($d = $dojos->fetch_assoc()): ?>
+                <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['nombre']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <label>Mes: <input type="number" name="periodo_mes" min="1" max="12" required></label><br>
+    <label>Año: <input type="number" name="periodo_anio" required></label><br>
+    <label>Cantidad de clases: <input type="number" name="cantidad_clases" min="0" required></label><br>
+    <label>Observaciones: <textarea name="observaciones"></textarea></label><br>
+    <label>Registrado por:
+        <select name="registrado_por_id">
+            <?php while ($r = $registradores->fetch_assoc()): ?>
+                <option value="<?= $r['id'] ?>"><?= htmlspecialchars($r['nombre_completo']) ?></option>
+            <?php endwhile; ?>
+        </select>
+    </label><br>
+    <button type="submit">Registrar</button>
+</form>
+
+¿Querés que te los combine en una sola página de panel administrativo? ¿O que te genere un sistema de navegación para estos módulos?

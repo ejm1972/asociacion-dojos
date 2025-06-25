@@ -87,3 +87,50 @@ CREATE TABLE grados (
     FOREIGN KEY (persona_id) REFERENCES personas(id)
 );
 
+📦 1. Esquema completo: Tablas + claves foráneas
+
+-- Tabla personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE,
+    email VARCHAR(100),
+    telefono VARCHAR(100),
+    observaciones TEXT
+);
+
+-- Tabla dojos
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Relación muchos a muchos: instructores en dojos
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
