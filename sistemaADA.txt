@@ -2033,6 +2033,8 @@ include('../includes/layout.php');
     Podés configurar el login para redirigir a menu.php, y desde ahí empezar a navegar.
 
 ¿Querés que el layout también destaque visualmente la página activa en el menú?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2046,6 +2048,7 @@ Perfecto. Vamos a hacer que el menú en layout.php:
 Usamos $_SERVER['SCRIPT_NAME'] o basename(__FILE__) para detectar la página actual, y le aplicamos una clase CSS activa.
 ✅ Versión mejorada de includes/layout.php con resalte de menú
 
+-----------------------------------------------------------------------------------------------------------------------------------
 <?php
 $current = basename($_SERVER['SCRIPT_NAME']);
 ?>
@@ -2118,6 +2121,8 @@ $current = basename($_SERVER['SCRIPT_NAME']);
     Se adapta automáticamente según el archivo .php cargado.
 
 ¿Querés que los enlaces se oculten según el rol (admin, dojo, lector) también desde el layout?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2213,6 +2218,8 @@ Cuotas	✅	✅	❌
 Grados	✅	✅	❌
 
 ¿Querés que el sistema devuelva un mensaje si alguien accede directamente a una sección que no le corresponde según su rol?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2222,8 +2229,9 @@ Perfecto, Eduardo. Vamos a agregar protección por rol a nivel de cada página p
 ✅ Solo accedan los roles permitidos
 ✅ Se muestre un mensaje si el acceso está denegado
 ✅ Se pueda aplicar fácilmente en cualquier archivo
-✅ 1. Crear función para validar rol
 
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 1. Crear función para validar rol
 Agregá este bloque a includes/auth.php o a un nuevo archivo tipo includes/rol.php:
 
 <?php
@@ -2237,6 +2245,7 @@ function requiere_rol($roles_permitidos) {
 
     Esto detiene la ejecución si el rol actual no está en la lista permitida.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Usar la función en cada página restringida
 Ejemplo: usuarios.php (solo admin)
 
@@ -2248,6 +2257,7 @@ requiere_rol(['admin']); // Solo admins pueden entrar
 
 // Resto del contenido
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Ejemplo: grados.php (admin y dojo)
 
 <?php
@@ -2268,6 +2278,7 @@ requiere_rol(['admin', 'dojo']);
 
 ¿Querés que te genere un zip con rol.php y una página de ejemplo protegida?
 
+-----------------------------------------------------------------------------------------------------------------------------------
 con el ultimo laout queda el menú en 2 renglones
 ChatGPT dijo:
 
@@ -2327,6 +2338,8 @@ Reemplazá en layout.php esta parte:
     Más estético y responsivo.
 
 ¿Querés que lo pase directamente al ZIP para reemplazar el layout anterior?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 para que ocupe todo el ancho disponible?
 ChatGPT dijo:
@@ -2379,11 +2392,15 @@ Reemplazá la sección del menú por esto:
     Visualmente se ve más limpio y moderno sin sacrificar responsividad.
 
 ¿Querés que actualice layout.php con este estilo y te lo empaquete como ZIP?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 agregarle layout al login
 ChatGPT dijo:
 
 Perfecto, Eduardo. Vamos a integrar el formulario de login dentro del layout.php, para que tenga el mismo estilo que el resto del sistema.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Versión con layout: login.php
 
 <?php
@@ -2443,6 +2460,8 @@ include('../includes/layout.php');
 💡 ¿Querés ocultar la barra del menú cuando no hay usuario logueado?
 
 Puedo modificar layout.php para que la barra de navegación solo aparezca si $_SESSION['usuario'] está presente. ¿Lo hacemos?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2451,6 +2470,8 @@ Perfecto. Vamos a modificar layout.php para que:
 
 ✅ Muestre la barra de navegación solo si el usuario está logueado
 ✅ Permita que páginas como login.php usen el mismo diseño sin mostrar el menú
+
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Versión final de includes/layout.php con menú condicional
 
 <?php
@@ -2547,6 +2568,8 @@ $rol = $_SESSION['rol'] ?? null;
     Si querés mostrar el nombre del usuario o su dojo también se puede añadir.
 
 ¿Querés que empaquete este layout.php actualizado con login.php también listo?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 me aparece esto depués deaplicar el cambio
 Notice
@@ -2560,6 +2583,8 @@ Perfecta observación, Eduardo.
 
 Ese Notice aparece porque en alguna parte (por ejemplo, login.php) ya se llamó a session_start(), y después layout.php lo vuelve a hacer. PHP no permite iniciar la sesión dos veces.
 ✅ Soluciones posibles
+
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Opción 1: Quitar session_start() de layout.php
 
 (Si ya se inicia sesión antes, como corresponde)
@@ -2571,6 +2596,7 @@ $current = basename($_SERVER['SCRIPT_NAME']);
 $rol = $_SESSION['rol'] ?? null;
 ?>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ➡ Esta es la opción más limpia si todas las páginas ya llaman a session_start() antes de incluir el layout.
 ✅ Opción 2: Protegerlo con if (!isset($_SESSION))
 
@@ -2590,6 +2616,8 @@ $rol = $_SESSION['rol'] ?? null;
     Si querés que el layout sea más autónomo y nunca dé errores, usá la Opción 2.
 
 ¿Querés que actualice y empaquete layout.php con la solución que elijas?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 usé la opción 2
 ChatGPT dijo:
@@ -2601,6 +2629,8 @@ Perfecto, Eduardo. Usar la opción 2 (session_status() === PHP_SESSION_NONE) es 
 ✅ Es seguro y reutilizable en cualquier contexto
 
 ¿Querés que ahora empaquete layout.php actualizado junto con login.php y el rol.php de control de acceso? Así tenés todo listo en un ZIP para seguir trabajando.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 no
 sigo probando y luego vemos algunos cambios
@@ -2609,6 +2639,8 @@ ChatGPT dijo:
 Perfecto, Eduardo. Probá tranquilo. Cuando estés listo para seguir con ajustes, nuevas funciones o empaquetado, avisame y retomamos desde donde dejaste.
 
 ¡Éxitos con las pruebas! 🥋💻
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 en este proyecto hay un esquema.sql para las tablas pero no hay un script para crea la BD
 se puede hacer?
@@ -2640,6 +2672,7 @@ CREATE TABLE personas (
 );
 -- etc...
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Script para crear base de datos: crear_base.sql
 
 -- Crear base de datos si no existe
@@ -2658,6 +2691,8 @@ USE aikido_db;
     Usar crear_base.sql como paso inicial (por ejemplo, con Docker o phpMyAdmin) y luego aplicar esquema.sql.
 
 ¿Querés que te genere el archivo completo ya fusionado (creación de DB + tablas), basado en tu esquema actual?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2685,6 +2720,8 @@ Perfecto, Eduardo. Vamos a mejorar la visualización de las tablas HTML en layou
 ✅ Alternen colores de fondo por fila
 ✅ Resalten al pasar el mouse
 ✅ Se vean claras en pantallas angostas
+
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 CSS para tablas: agregalo dentro de <style> en layout.php
 
 table {
@@ -2725,6 +2762,8 @@ tr:hover {
     Buen espaciado en texto y columnas
 
 ¿Querés que también agregue estilos para botones (<a class="boton">, <button>, etc.) o para mensajes tipo alerta/éxito?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -2734,6 +2773,7 @@ Perfecto, Eduardo. Vamos a agregar estilos visuales consistentes también para:
 ✅ Botones: acciones claras y destacadas
 ✅ Alertas: mensajes de error, éxito o información
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Todo irá dentro del <style> de tu layout.php.
 🧩 1. Estilos para botones
 
@@ -2768,6 +2808,7 @@ Todo irá dentro del <style> de tu layout.php.
 <a href="editar.php?id=5" class="boton">Editar</a>
 <a href="eliminar.php?id=5" class="boton boton-eliminar">Eliminar</a>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 2. Estilos para alertas / mensajes
 
 .alerta {
@@ -2802,71 +2843,7 @@ Todo irá dentro del <style> de tu layout.php.
 
 ¿Querés que te prepare un fragmento con todos estos estilos listos para copiar-pegar al final del <style> en layout.php?
 
-opciones para alojamiento gratis de sitios web
-ChatGPT dijo:
-
-Claro, Eduardo. Acá tenés varias opciones gratuitas para alojar sitios web, especialmente útiles para proyectos como este de Aikido en PHP + MySQL:
-🔧 Para sitios estáticos (HTML/CSS/JS):
-
-    No sirven si tu proyecto necesita PHP y base de datos.
-
-    GitHub Pages – Muy estable, ideal para portfolios y documentaciones.
-
-    Netlify – Soporta sitios estáticos y despliegue desde Git.
-
-    Vercel – Similar a Netlify, muy buena experiencia para proyectos front-end.
-
-    Cloudflare Pages – Simple, rápido y con integración Git.
-
-🌐 Para sitios dinámicos con PHP/MySQL (como el tuyo):
-✅ 1. 000WebHost
-
-    Soporte para PHP y MySQL
-
-    Panel propio (no cPanel), anuncios mínimos
-
-    Límite diario de uso, algo inestable si tenés mucho tráfico
-
-    FTP y phpMyAdmin
-
-✅ 2. InfinityFree
-
-    Sin publicidad
-
-    Soporta PHP 7.4 y MySQL
-
-    cPanel personalizado
-
-    Tiene ciertas restricciones (por ejemplo, sin envío de correos SMTP)
-
-✅ 3. AwardSpace
-
-    1 dominio + 3 subdominios gratis
-
-    PHP y MySQL, sin anuncios
-
-    Buen panel pero recursos limitados
-
-✅ 4. FreeHosting.com
-
-    PHP, MySQL, FTP
-
-    Dominio propio (no subdominios)
-
-    Ancho de banda mensual limitado
-
-    Algo menos estable
-
-⚠️ Consideraciones
-
-    Estas opciones son buenas para pruebas y proyectos personales.
-
-    En todos los casos, la base de datos MySQL es limitada (1 base, pocos MB).
-
-    Algunos no permiten correo saliente o tienen limitaciones de cron jobs.
-
-🚀 Alternativa: Local con Docker + ngrok
-
+-----------------------------------------------------------------------------------------------------------------------------------
 Si querés mostrar tu proyecto desde tu PC temporalmente:
 
 ngrok http 80
@@ -2875,6 +2852,7 @@ Y compartís el link con quien quieras. No es hosting, pero útil para demos.
 
 ¿Querés que te recomiende uno específico para subir este proyecto en PHP/MySQL sin problemas?
 
+-----------------------------------------------------------------------------------------------------------------------------------
 agregar vencimiento a la sesión
 ChatGPT dijo:
 
@@ -2882,6 +2860,7 @@ Perfecto, Eduardo. Agregar vencimiento de sesión mejora la seguridad del sistem
 ✅ Objetivo: cerrar sesión automáticamente después de X minutos de inactividad.
 
 Te muestro cómo hacerlo paso a paso:
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 1. Definí la duración máxima (por ejemplo, 20 minutos)
 
 En includes/auth.php o un archivo común que se incluya en cada página protegida:
@@ -2913,6 +2892,7 @@ if (!isset($_SESSION['usuario'])) {
 $usuario_actual = $_SESSION['usuario'];
 $rol_actual = $_SESSION['rol'] ?? null;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 2. Mostrar mensaje en login.php si expiró la sesión
 
 Al inicio de login.php (antes del <form>), agregá:
@@ -2930,6 +2910,8 @@ if (isset($_GET['expirada'])) {
     Esto se integra perfectamente con tu sistema actual.
 
 ¿Querés que lo empaquete listo para reemplazar tu auth.php actual o preferís probarlo manualmente?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 lo pruebo manualmente
 ChatGPT dijo:
@@ -2938,12 +2920,15 @@ Perfecto, Eduardo. Probalo tranquilo.
 Si más adelante querés ajustar el tiempo, aplicar cierre automático en más lugares o agregar un contador visible de sesión, me avisás y lo sumamos.
 
 ¡Éxitos con las pruebas!
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 como sería el uso en el login.php
 ChatGPT dijo:
 
 En login.php, solo tenés que agregar un pequeño bloque para mostrar un mensaje si la sesión expiró.
 Este se activa cuando el usuario es redirigido desde auth.php con ?expirada=1 en la URL.
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso a agregar en login.php
 🔧 Agregalo antes del formulario (después del session_start() si lo tenés):
 
@@ -2978,11 +2963,14 @@ login.php?expirada=1
 Y el mensaje se muestra arriba del formulario.
 
 ¿Querés que el login muestre automáticamente también si hubo un "logout normal" con un mensaje similar?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
 
 Perfecto. Vamos a hacer que login.php también muestre un mensaje cuando el usuario cierra sesión voluntariamente, además del mensaje por inactividad.
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 1: modificar logout.php
 
 En logout.php, al final del script, redirigí con un indicador de logout:
@@ -2993,6 +2981,7 @@ session_destroy();
 header("Location: login.php?logout=1");
 exit;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 2: mostrar mensaje en login.php
 
 En login.php, agregá este bloque antes del formulario (puede ir junto con el mensaje de expiración):
@@ -3016,11 +3005,14 @@ En login.php, agregá este bloque antes del formulario (puede ir junto con el me
     login.php?expirada=1 → muestra “Tu sesión expiró por inactividad”
 
 ¿Querés que te prepare un fragmento con ambos mensajes para insertar directamente en tu login?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
 
 Perfecto, Eduardo. Acá tenés el fragmento completo listo para pegar en tu login.php, justo antes del formulario de login:
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Fragmento HTML/PHP para mostrar mensajes
 
 <?php if (isset($_GET['logout'])): ?>
@@ -3033,6 +3025,7 @@ Perfecto, Eduardo. Acá tenés el fragmento completo listo para pegar en tu logi
     </div>
 <?php endif; ?>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Asegurate de tener estos estilos en tu layout o <style>
 
 .alerta {
@@ -3054,4 +3047,1151 @@ Perfecto, Eduardo. Acá tenés el fragmento completo listo para pegar en tu logi
     Esperá más de 20 minutos (o cambiá el tiempo a 60 segundos para testear) → redirige a login con mensaje de expiración.
 
 Listo para pegar. ¿Querés que prepare algo más con esto?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+analizar esta planilla para agregarlo en el esquema.sql
+ChatGPT dijo:
+
+La planilla “Datero de Dojos.xlsx” tiene un formato no tabular al inicio: los primeros registros son encabezados y etiquetas distribuidas en celdas sueltas. Específicamente:
+
+    Hay varias filas vacías al comienzo.
+
+    Luego aparecen títulos como:
+
+        “Nombre del Dojo”
+
+        “Instructor a cargo y graduación”
+
+        “Provincia”
+
+Parece que la información está organizada como fichas verticales, no en filas tipo base de datos.
+🛠 Qué podemos hacer:
+
+    Detectar bloques de datos (por ejemplo, cada dojo con su info ocupando varias filas).
+
+    Estandarizarlo en una tabla con columnas como:
+
+| nombre_dojo | instructor | grado | provincia | ciudad | dirección | contacto | email | etc... |
+
+    A partir de eso, generar un script SQL de inserción, o al menos una estructura nueva para esquema.sql.
+
+❓¿Querés que intente estructurar los datos automáticamente para detectar los campos principales por dojo?
+
+(Te muestro una tabla limpia con los campos interpretados y seguimos desde ahí)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Gracias, Eduardo. La planilla está estructurada como una ficha vertical por dojo, con campos fijos en una columna (tipo etiqueta) y los valores correspondientes en la columna siguiente. Ejemplo:
+Fila	Columna 2	Columna 3 (valor)
+3	Nombre del Dojo:	Aikido Rosario Dojo
+4	Instructor a cargo y graduación:	Sensei Pérez, 4º Dan
+5	Provincia	Santa Fe
+6	Localidad	Rosario
+7	Dirección con CP	Bv. Oroño 1234 (2000)
+8	Mail	contacto@aikido.com.ar
+9	Teléfono de referencia	341-1234567
+10	Instructor adjunto y graduación:	Sempai López, 2º Dan
+11	Instructor adjunto y graduación:	(otro adjunto opcional)
+
+Este bloque se repite dojo por dojo.
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ Propuesta de estructura de tabla dojos_extendido
+
+Basado en estos campos, podemos extender o crear una nueva tabla SQL así:
+
+CREATE TABLE IF NOT EXISTS dojos_extendido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    instructor_principal VARCHAR(100),
+    grado_principal VARCHAR(50),
+    provincia VARCHAR(100),
+    localidad VARCHAR(100),
+    direccion VARCHAR(150),
+    mail VARCHAR(100),
+    telefono VARCHAR(50),
+    instructor_adjunto_1 VARCHAR(100),
+    grado_adjunto_1 VARCHAR(50),
+    instructor_adjunto_2 VARCHAR(100),
+    grado_adjunto_2 VARCHAR(50)
+);
+
+    Alternativamente, se puede normalizar a una tabla de instructores por dojo, si querés escalabilidad.
+
+❓¿Querés que extraiga todos los bloques de la planilla a una tabla como esta para revisión, y luego te genere las sentencias INSERT en SQL?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Parece que no puedo hacer un análisis de datos más avanzado en este momento. Por favor, intentá de nuevo más tarde.
+
+Mientras tanto, si querés, puedo:
+
+    Mostrate cómo escribir el script manualmente en base a una ficha individual.
+
+    Explicarte cómo podés procesarlo localmente con Excel o Python para generar INSERT INTO.
+
+    Armar la estructura SQL de la tabla con campos listos.
+
+¿Preferís seguir por alguna de esas vías ahora?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos entonces a dejarte:
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 1. Estructura SQL sugerida (lista para esquema.sql)
+
+Basada en los campos detectados desde la planilla, podés agregar esto:
+
+CREATE TABLE IF NOT EXISTS dojos_extendido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    instructor_principal VARCHAR(100),
+    grado_principal VARCHAR(50),
+    provincia VARCHAR(100),
+    localidad VARCHAR(100),
+    direccion VARCHAR(150),
+    mail VARCHAR(100),
+    telefono VARCHAR(50),
+    instructor_adjunto_1 VARCHAR(100),
+    grado_adjunto_1 VARCHAR(50),
+    instructor_adjunto_2 VARCHAR(100),
+    grado_adjunto_2 VARCHAR(50)
+);
+
+🔸 Si preferís mantener una tabla dojos simple, podés usar esto como una tabla aparte o como vista extendida.
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 2. Ejemplo de INSERT a mano (podés replicarlo en base a Excel)
+
+INSERT INTO dojos_extendido (
+    nombre,
+    instructor_principal,
+    provincia,
+    localidad,
+    direccion,
+    mail,
+    telefono,
+    instructor_adjunto_1,
+    instructor_adjunto_2
+) VALUES (
+    'Aikido Rosario Dojo',
+    'Sensei Pérez, 4º Dan',
+    'Santa Fe',
+    'Rosario',
+    'Bv. Oroño 1234 (2000)',
+    'contacto@aikido.com.ar',
+    '341-1234567',
+    'Sempai López, 2º Dan',
+    'Sempai Gómez, 1º Dan'
+);
+
+💡 Si el grado está dentro del nombre, podés después parsearlo por separado o mantenerlo como un campo libre.
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 3. Opción para hacerlo local con Excel
+
+Si querés generar automáticamente los INSERT desde la planilla, podés usar:
+
+    Un script en Python + pandas
+
+    Una fórmula en Excel como:
+
+="INSERT INTO dojos_extendido (nombre, provincia, localidad) VALUES ('" & B3 & "', '" & B5 & "', '" & B6 & "');"
+
+🔁 Solo necesitás reordenar los datos como filas con cabeceras, y copiar la fórmula.
+
+¿Querés que te prepare un archivo .sql con 2 o 3 registros de ejemplo? También puedo ayudarte a reestructurar la planilla si me la querés devolver con una hoja "limpia".
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+me gustaría dividir las tablas en dojos, instructores que a su vez son personas, 
+a la tabla de dojos agregar
+Inicio de Actividades:
+Rama de Dependencia:
+Ingreso a ADA:
+Instructor responsable administrativo:
+Celular:
+Mail:
+Observaciones:
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a normalizar la base de datos para que:
+
+    Los instructores estén en una tabla común de personas.
+
+    Los dojos apunten a personas específicas como responsables.
+
+    Tengamos campos administrativos claramente definidos en dojos.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 1. Tabla personas (ya existente o extendida)
+
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE,
+    email VARCHAR(100),
+    telefono VARCHAR(100),
+    observaciones TEXT
+);
+
+    Esta tabla puede ser compartida por practicantes, instructores y responsables.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ 2. Tabla dojos (actualizada con los campos nuevos)
+
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+🧠 Notas
+
+    El campo responsable_admin_id conecta con una persona (quien figura como responsable del dojo).
+
+    El campo celular se deja en dojos si querés registrar el teléfono institucional. Si no, podés omitirlo y usar el del responsable.
+
+    Los instructores pueden estar relacionados por otra tabla (instructores_por_dojo) si hay más de uno.
+
+❓¿Querés que también definamos esa tabla intermedia para múltiples instructores por dojo, con grado y rol?
+
+(ejemplo: principal, adjunto, administrativo)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+tabla intermedia de instructores por dojos
+ChatGPT dijo:
+
+Excelente decisión, Eduardo. Con una tabla intermedia podemos asociar a cada dojo uno o varios instructores, y especificar:
+
+    Su rol dentro del dojo (principal, adjunto, administrativo, etc.)
+
+    Su grado
+
+    Desde cuándo ejercen ese rol
+
+-----------------------------------------------------------------------------------------------------------------------------------
+✅ Nueva tabla: instructores_por_dojo
+
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+📌 Qué permite esta tabla
+dojo_id	persona_id	rol	grado	desde_fecha
+1	4	principal	4º Dan	2019-03-01
+1	7	adjunto	2º Dan	2022-01-15
+1	8	administrativo	-	2023-06-10
+🔄 Ventajas
+
+    Soporta múltiples instructores por dojo
+
+    Permite buscar todos los instructores de un dojo
+
+    Permite filtrar por instructores con rol principal
+
+    Cada instructor puede figurar en varios dojos si aplica
+
+¿Querés que actualice el esquema.sql completo incluyendo esta tabla intermedia, y lo genere para descargar?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Dijiste:
+si pero para copiar, no para descargar
+ChatGPT dijo:
+
+Perfecto, Eduardo. Acá tenés el bloque completo de SQL listo para copiar y pegar en tu esquema.sql, con todas las mejoras integradas:
+✅ Bloque actualizado para dojos, personas e instructores_por_dojo
+
+-----------------------------------------------------------------------------------------------------------------------------------
+-- Tabla personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE,
+    email VARCHAR(100),
+    telefono VARCHAR(100),
+    observaciones TEXT
+);
+
+-- Tabla dojos (extendida)
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Tabla intermedia: instructores por dojo
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+Con esto ya tenés una estructura sólida y flexible para gestionar:
+
+    Datos administrativos de cada dojo
+
+    Relación completa con instructores y su función
+
+    Reutilización de personas como instructores o practicantes
+
+¿Querés que prepare también algunas consultas útiles (SELECT) de ejemplo para mostrar instructores por dojo o dojos por instructor?
+
+-----------------------------------------------------------------------------------------------------------------------------------
+si
+ChatGPT dijo:
+
+Perfecto. Acá tenés consultas SQL prácticas que podés usar directamente para interactuar con tu nueva estructura de datos.
+✅ 1. Listar todos los instructores de un dojo (por nombre)
+
+SELECT
+    d.nombre AS dojo,
+    p.nombre,
+    p.apellido,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE d.nombre = 'Aikido Rosario Dojo';
+
+✅ 2. Listar todos los dojos donde una persona es instructor
+
+SELECT
+    p.nombre,
+    p.apellido,
+    d.nombre AS dojo,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE p.apellido = 'Pérez';
+
+    También podés filtrar por p.id = X si tenés el ID directamente.
+
+✅ 3. Listar los instructores principales de todos los dojos
+
+SELECT
+    d.nombre AS dojo,
+    p.nombre,
+    p.apellido,
+    ipd.grado
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE ipd.rol = 'principal'
+ORDER BY d.nombre;
+
+✅ 4. Listar dojos con su responsable administrativo (si tiene)
+
+SELECT
+    d.nombre AS dojo,
+    p.nombre AS responsable_nombre,
+    p.apellido AS responsable_apellido,
+    d.mail,
+    d.celular
+FROM dojos d
+LEFT JOIN personas p ON d.responsable_admin_id = p.id;
+
+Estas consultas te van a servir para armar reportes, dashboards o vistas web más adelante.
+
+¿Querés que prepare también una vista SQL (CREATE VIEW) para resumir esto en una sola tabla consultable?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a crear una vista SQL que consolide la información clave de los dojos junto con sus instructores principales y responsables administrativos.
+✅ Vista: vista_dojos_completa
+
+CREATE OR REPLACE VIEW vista_dojos_completa AS
+SELECT
+    d.id AS dojo_id,
+    d.nombre AS dojo,
+    d.ciudad,
+    d.provincia,
+    d.pais,
+    d.direccion,
+    d.fecha_inicio,
+    d.rama_dependencia,
+    d.fecha_ingreso_ada,
+    d.mail AS dojo_mail,
+    d.celular AS dojo_celular,
+    d.observaciones AS dojo_observaciones,
+
+    -- Responsable administrativo
+    ra.nombre AS responsable_nombre,
+    ra.apellido AS responsable_apellido,
+    ra.email AS responsable_email,
+    ra.telefono AS responsable_telefono,
+
+    -- Instructor principal (puede haber más de uno por dojo)
+    ip.nombre AS instructor_principal_nombre,
+    ip.apellido AS instructor_principal_apellido,
+    ipd.grado AS instructor_principal_grado,
+    ipd.desde_fecha AS instructor_principal_desde
+
+FROM dojos d
+
+-- Responsable administrativo
+LEFT JOIN personas ra ON d.responsable_admin_id = ra.id
+
+-- Instructores principales
+LEFT JOIN instructores_por_dojo ipd ON d.id = ipd.dojo_id AND ipd.rol = 'principal'
+LEFT JOIN personas ip ON ipd.persona_id = ip.id;
+
+🔍 Resultado
+
+Consultando SELECT * FROM vista_dojos_completa vas a obtener:
+dojo	ciudad	instructor_principal	responsable_admin	mail	...
+Rosario Dojo	Rosario	Pérez, 4º Dan	Gómez	...	
+
+    Muestra una fila por cada instructor principal por dojo, pero también puede mostrar NULL si aún no hay asignado.
+
+¿Querés una segunda vista más detallada para todos los instructores (no solo principal) por dojo?
+Dijiste:
+si
+ChatGPT dijo:
+
+Genial, Eduardo. Ahora armamos una segunda vista para listar todos los instructores de cada dojo, no solo los principales.
+✅ Vista: vista_instructores_por_dojo
+
+CREATE OR REPLACE VIEW vista_instructores_por_dojo AS
+SELECT
+    d.id AS dojo_id,
+    d.nombre AS dojo,
+    d.provincia,
+    d.ciudad,
+    p.id AS persona_id,
+    p.nombre AS instructor_nombre,
+    p.apellido AS instructor_apellido,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+ORDER BY d.nombre, ipd.rol;
+
+🔍 Resultado esperado
+dojo	instructor	rol	grado	desde_fecha
+Aikido Rosario Dojo	Pérez	principal	4º Dan	2019-03-01
+Aikido Rosario Dojo	López	adjunto	2º Dan	2022-01-01
+Aikido Sur	Gómez	administrativo	–	2023-06-10
+🔄 Usos
+
+    Ideal para vistas tipo “ficha del dojo” mostrando todos sus instructores.
+
+    Puede filtrarse por dojo_id, persona_id, rol, o grado.
+
+¿Querés que prepare también una versión exportable (archivo .sql) con ambas vistas, por si querés tenerlas separadas del esquema.sql principal?
+
+necesitaría dos esquemas de sql
+uno con todas tablas completas y triggers 
+otro con las vistas propuestas 
+otro con las consultas select para consultar los distintos datos que fueron agregados
+en texto para copiar y pegar 
+ChatGPT dijo:
+
+Perfecto, Eduardo. A continuación te dejo los tres bloques bien organizados, listos para copiar y pegar:
+📦 1. Esquema completo: Tablas + claves foráneas
+
+-- Tabla personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100),
+    fecha_nacimiento DATE,
+    email VARCHAR(100),
+    telefono VARCHAR(100),
+    observaciones TEXT
+);
+
+-- Tabla dojos
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Relación muchos a muchos: instructores en dojos
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+    Si más adelante querés triggers para auditar o validar duplicados, los agregamos también.
+
+📊 2. Vistas: para facilitar reportes y consultas
+
+-- Vista completa con dojo + responsable + instructor principal
+CREATE OR REPLACE VIEW vista_dojos_completa AS
+SELECT
+    d.id AS dojo_id,
+    d.nombre AS dojo,
+    d.ciudad,
+    d.provincia,
+    d.pais,
+    d.direccion,
+    d.fecha_inicio,
+    d.rama_dependencia,
+    d.fecha_ingreso_ada,
+    d.mail AS dojo_mail,
+    d.celular AS dojo_celular,
+    d.observaciones AS dojo_observaciones,
+
+    ra.nombre AS responsable_nombre,
+    ra.apellido AS responsable_apellido,
+    ra.email AS responsable_email,
+    ra.telefono AS responsable_telefono,
+
+    ip.nombre AS instructor_principal_nombre,
+    ip.apellido AS instructor_principal_apellido,
+    ipd.grado AS instructor_principal_grado,
+    ipd.desde_fecha AS instructor_principal_desde
+
+FROM dojos d
+LEFT JOIN personas ra ON d.responsable_admin_id = ra.id
+LEFT JOIN instructores_por_dojo ipd ON d.id = ipd.dojo_id AND ipd.rol = 'principal'
+LEFT JOIN personas ip ON ipd.persona_id = ip.id;
+
+-- Vista detallada de todos los instructores por dojo
+CREATE OR REPLACE VIEW vista_instructores_por_dojo AS
+SELECT
+    d.id AS dojo_id,
+    d.nombre AS dojo,
+    d.provincia,
+    d.ciudad,
+    p.id AS persona_id,
+    p.nombre AS instructor_nombre,
+    p.apellido AS instructor_apellido,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+ORDER BY d.nombre, ipd.rol;
+
+🔎 3. Consultas SELECT útiles
+
+-- Listar todos los instructores de un dojo específico
+SELECT
+    d.nombre AS dojo,
+    p.nombre,
+    p.apellido,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE d.nombre = 'Aikido Rosario Dojo';
+
+-- Listar todos los dojos donde participa un instructor específico
+SELECT
+    p.nombre,
+    p.apellido,
+    d.nombre AS dojo,
+    ipd.rol,
+    ipd.grado,
+    ipd.desde_fecha
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE p.apellido = 'Pérez';
+
+-- Listar todos los instructores principales de todos los dojos
+SELECT
+    d.nombre AS dojo,
+    p.nombre,
+    p.apellido,
+    ipd.grado
+FROM instructores_por_dojo ipd
+JOIN personas p ON ipd.persona_id = p.id
+JOIN dojos d ON ipd.dojo_id = d.id
+WHERE ipd.rol = 'principal'
+ORDER BY d.nombre;
+
+-- Listar dojos con su responsable administrativo
+SELECT
+    d.nombre AS dojo,
+    p.nombre AS responsable_nombre,
+    p.apellido AS responsable_apellido,
+    d.mail,
+    d.celular
+FROM dojos d
+LEFT JOIN personas p ON d.responsable_admin_id = p.id;
+
+¿Querés que prepare también un conjunto de INSERT INTO con datos ficticios para probar esta estructura?
+
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Acá te dejo una serie de INSERT ficticios para poblar las tablas personas, dojos e instructores_por_dojo y poder probar la estructura completa.
+✅ 1. Insertar personas (instructores y responsables)
+
+INSERT INTO personas (nombre, apellido, email, telefono)
+VALUES 
+  ('Carlos', 'Pérez', 'carlos.perez@aikido.org', '341-1111111'),  -- id = 1
+  ('Lucía', 'Gómez', 'lucia.gomez@aikido.org', '341-2222222'),    -- id = 2
+  ('Juan', 'Lopez', 'juan.lopez@aikido.org', '341-3333333');      -- id = 3
+
+✅ 2. Insertar dojos
+
+INSERT INTO dojos (
+    nombre, ciudad, provincia, pais, direccion, 
+    fecha_inicio, rama_dependencia, fecha_ingreso_ada,
+    responsable_admin_id, celular, mail, observaciones
+) VALUES 
+  (
+    'Aikido Rosario Dojo',
+    'Rosario',
+    'Santa Fe',
+    'Argentina',
+    'Bv. Oroño 1234',
+    '2005-03-01',
+    'Rama Central Aikikai',
+    '2010-05-20',
+    1,
+    '341-9999999',
+    'dojo.rosario@aikido.org',
+    'Primer dojo fundado en Rosario.'
+  ),
+  (
+    'Aikido Córdoba Dojo',
+    'Córdoba',
+    'Córdoba',
+    'Argentina',
+    'Av. Colón 4567',
+    '2012-06-15',
+    'Rama Oeste',
+    '2015-08-10',
+    2,
+    '351-8888888',
+    'cordoba@aikido.org',
+    'Afiliado recientemente a ADA.'
+  );
+
+✅ 3. Insertar instructores por dojo
+
+-- Dojo 1: Rosario
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+  (1, 1, 'principal', '4º Dan', '2005-03-01'),
+  (1, 3, 'adjunto', '2º Dan', '2021-01-01');
+
+-- Dojo 2: Córdoba
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+  (2, 2, 'principal', '3º Dan', '2012-06-15');
+
+🧪 Probá con estas consultas después:
+
+SELECT * FROM vista_dojos_completa;
+SELECT * FROM vista_instructores_por_dojo;
+
+¿Querés que también prepare datos ficticios para practicantes, o por ahora lo dejamos solo con instructores y dojos?
+
+agregar estos nuevos datos de dojos al proyecto php
+para copiar y pegar, no exportar archivos
+ChatGPT dijo:
+
+Perfecto. Vamos a integrar los nuevos campos del dojo al proyecto PHP actual. A continuación te dejo lo necesario para:
+
+    Agregar los campos al formulario de alta/modificación del dojo (crear_dojo.php / editar_dojo.php)
+
+    Procesarlos en el backend
+
+    Mostrarlos en la vista de listado si querés
+
+✅ 1. Campos HTML nuevos en el formulario dojo
+
+📄 En crear_dojo.php o editar_dojo.php, agregá esto dentro del <form>:
+
+<label>Fecha de Inicio de Actividades:</label>
+<input type="date" name="fecha_inicio"><br>
+
+<label>Rama de Dependencia:</label>
+<input type="text" name="rama_dependencia"><br>
+
+<label>Fecha de Ingreso a ADA:</label>
+<input type="date" name="fecha_ingreso_ada"><br>
+
+<label>Instructor Responsable Administrativo:</label>
+<select name="responsable_admin_id">
+    <option value="">-- Seleccionar Persona --</option>
+    <?php
+    // Suponiendo que $personas contiene id + nombre + apellido
+    foreach ($personas as $persona) {
+        echo "<option value=\"{$persona['id']}\">{$persona['nombre']} {$persona['apellido']}</option>";
+    }
+    ?>
+</select><br>
+
+<label>Celular:</label>
+<input type="text" name="celular"><br>
+
+<label>Mail:</label>
+<input type="email" name="mail"><br>
+
+<label>Observaciones:</label><br>
+<textarea name="observaciones" rows="3" cols="40"></textarea><br>
+
+✅ 2. Guardar esos campos en el backend (ej: procesar_dojo.php)
+
+$fecha_inicio = $_POST['fecha_inicio'] ?? null;
+$rama_dependencia = $_POST['rama_dependencia'] ?? null;
+$fecha_ingreso_ada = $_POST['fecha_ingreso_ada'] ?? null;
+$responsable_admin_id = $_POST['responsable_admin_id'] ?? null;
+$celular = $_POST['celular'] ?? null;
+$mail = $_POST['mail'] ?? null;
+$observaciones = $_POST['observaciones'] ?? null;
+
+// Ejemplo INSERT
+$sql = "INSERT INTO dojos (
+    nombre, ciudad, provincia, pais, direccion,
+    fecha_inicio, rama_dependencia, fecha_ingreso_ada,
+    responsable_admin_id, celular, mail, observaciones
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    $nombre, $ciudad, $provincia, $pais, $direccion,
+    $fecha_inicio, $rama_dependencia, $fecha_ingreso_ada,
+    $responsable_admin_id, $celular, $mail, $observaciones
+]);
+
+    ⚠️ Asegurate de tener cargadas las personas en $personas (desde SELECT * FROM personas) antes de usar el <select>.
+
+✅ 3. En el listado de dojos (opcional)
+
+📄 En listar_dojos.php, podés agregar columnas nuevas:
+
+<th>Inicio</th>
+<th>Responsable</th>
+<th>Celular</th>
+<th>Mail</th>
+
+Y al mostrar los datos (si hacés JOIN con personas):
+
+<td><?= $dojo['fecha_inicio'] ?></td>
+<td><?= $dojo['responsable_nombre'] . ' ' . $dojo['responsable_apellido'] ?></td>
+<td><?= $dojo['celular'] ?></td>
+<td><?= $dojo['mail'] ?></td>
+
+¿Querés que te prepare el bloque de SELECT * con JOIN ya armado para mostrar los dojos con nombre de responsable?
+Dijiste:
+este proyecto ya tiene 
+dojos.php
+registrar_dojo.php
+editar_dojo.php
+eliminar_dojo.php
+necesito integrar los nuevos datos y relaciones a los archivos php ya definidos en este proyecto
+ChatGPT dijo:
+
+Perfecto. Vamos a adaptar tu proyecto actual PHP integrando los nuevos campos y relaciones en los archivos existentes:
+✅ 1. registrar_dojo.php
+🔁 Reemplazá el formulario actual o agregá estos campos al final:
+
+<label>Fecha de Inicio de Actividades:</label>
+<input type="date" name="fecha_inicio"><br>
+
+<label>Rama de Dependencia:</label>
+<input type="text" name="rama_dependencia"><br>
+
+<label>Fecha de Ingreso a ADA:</label>
+<input type="date" name="fecha_ingreso_ada"><br>
+
+<label>Instructor Responsable Administrativo:</label>
+<select name="responsable_admin_id">
+  <option value="">-- Seleccionar Persona --</option>
+  <?php
+  require_once 'includes/db.php';
+  $stmt = $pdo->query("SELECT id, nombre, apellido FROM personas ORDER BY apellido");
+  while ($row = $stmt->fetch()) {
+    echo "<option value=\"{$row['id']}\">{$row['apellido']}, {$row['nombre']}</option>";
+  }
+  ?>
+</select><br>
+
+<label>Celular:</label>
+<input type="text" name="celular"><br>
+
+<label>Mail:</label>
+<input type="email" name="mail"><br>
+
+<label>Observaciones:</label><br>
+<textarea name="observaciones" rows="3" cols="40"></textarea><br>
+
+🧠 Asegurate de actualizar el INSERT INTO:
+
+$sql = "INSERT INTO dojos (
+    nombre, ciudad, provincia, pais, direccion,
+    fecha_inicio, rama_dependencia, fecha_ingreso_ada,
+    responsable_admin_id, celular, mail, observaciones
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    $_POST['nombre'], $_POST['ciudad'], $_POST['provincia'], $_POST['pais'], $_POST['direccion'],
+    $_POST['fecha_inicio'], $_POST['rama_dependencia'], $_POST['fecha_ingreso_ada'],
+    $_POST['responsable_admin_id'], $_POST['celular'], $_POST['mail'], $_POST['observaciones']
+]);
+
+✅ 2. editar_dojo.php
+🔁 Cargá los nuevos campos desde la base:
+
+// Supongamos que ya cargaste el dojo en $dojo
+$fecha_inicio = $dojo['fecha_inicio'];
+$rama = $dojo['rama_dependencia'];
+$ingreso_ada = $dojo['fecha_ingreso_ada'];
+$responsable = $dojo['responsable_admin_id'];
+$celular = $dojo['celular'];
+$mail = $dojo['mail'];
+$obs = $dojo['observaciones'];
+
+🔁 Y en el formulario (con valores precargados):
+
+<label>Fecha de Inicio de Actividades:</label>
+<input type="date" name="fecha_inicio" value="<?= $fecha_inicio ?>"><br>
+
+<label>Rama de Dependencia:</label>
+<input type="text" name="rama_dependencia" value="<?= $rama ?>"><br>
+
+<label>Fecha de Ingreso a ADA:</label>
+<input type="date" name="fecha_ingreso_ada" value="<?= $ingreso_ada ?>"><br>
+
+<label>Instructor Responsable Administrativo:</label>
+<select name="responsable_admin_id">
+  <option value="">-- Seleccionar Persona --</option>
+  <?php
+  $stmt = $pdo->query("SELECT id, nombre, apellido FROM personas ORDER BY apellido");
+  while ($row = $stmt->fetch()) {
+    $selected = ($row['id'] == $responsable) ? 'selected' : '';
+    echo "<option value=\"{$row['id']}\" $selected>{$row['apellido']}, {$row['nombre']}</option>";
+  }
+  ?>
+</select><br>
+
+<label>Celular:</label>
+<input type="text" name="celular" value="<?= $celular ?>"><br>
+
+<label>Mail:</label>
+<input type="email" name="mail" value="<?= $mail ?>"><br>
+
+<label>Observaciones:</label><br>
+<textarea name="observaciones" rows="3" cols="40"><?= $obs ?></textarea><br>
+
+🔁 En el UPDATE asegurate de incluir los campos:
+
+$sql = "UPDATE dojos SET
+    nombre = ?, ciudad = ?, provincia = ?, pais = ?, direccion = ?,
+    fecha_inicio = ?, rama_dependencia = ?, fecha_ingreso_ada = ?,
+    responsable_admin_id = ?, celular = ?, mail = ?, observaciones = ?
+    WHERE id = ?";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([
+    $_POST['nombre'], $_POST['ciudad'], $_POST['provincia'], $_POST['pais'], $_POST['direccion'],
+    $_POST['fecha_inicio'], $_POST['rama_dependencia'], $_POST['fecha_ingreso_ada'],
+    $_POST['responsable_admin_id'], $_POST['celular'], $_POST['mail'], $_POST['observaciones'],
+    $_POST['id']
+]);
+
+✅ 3. dojos.php (listado)
+🔁 Agregá columnas nuevas si querés mostrar info adicional:
+
+<th>Inicio</th>
+<th>Responsable</th>
+<th>Celular</th>
+<th>Mail</th>
+
+🔁 En la tabla HTML:
+
+<td><?= $dojo['fecha_inicio'] ?></td>
+<td><?= $dojo['responsable_nombre'] . ' ' . $dojo['responsable_apellido'] ?></td>
+<td><?= $dojo['celular'] ?></td>
+<td><?= $dojo['mail'] ?></td>
+
+🔁 Asegurate de hacer un JOIN con la tabla personas:
+
+SELECT d.*, p.nombre AS responsable_nombre, p.apellido AS responsable_apellido
+FROM dojos d
+LEFT JOIN personas p ON d.responsable_admin_id = p.id
+ORDER BY d.nombre;
+
+✅ 4. eliminar_dojo.php
+
+No hace falta modificar nada, ya que los nuevos campos se eliminan junto con el dojo.
+
+¿Querés que prepare ahora el mismo tipo de integración para instructores_por_dojo (formulario, alta y edición)?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a integrar la tabla instructores_por_dojo en tu proyecto PHP. Esto te permitirá asociar uno o más instructores (que ya están cargados como personas) a un dojo, con:
+
+    Rol (principal, adjunto, administrativo)
+
+    Grado
+
+    Fecha desde la que cumple ese rol
+
+✅ 1. Nuevo archivo: asignar_instructor.php
+
+Usalo para asignar instructores a un dojo.
+
+<?php
+require_once 'includes/db.php';
+
+$dojo_id = $_GET['dojo_id'] ?? null;
+
+if (!$dojo_id) {
+    echo "ID de dojo no especificado.";
+    exit;
+}
+
+// Obtener dojo
+$stmt = $pdo->prepare("SELECT nombre FROM dojos WHERE id = ?");
+$stmt->execute([$dojo_id]);
+$dojo = $stmt->fetch();
+
+// Obtener personas para elegir
+$personas = $pdo->query("SELECT id, nombre, apellido FROM personas ORDER BY apellido")->fetchAll();
+?>
+
+<h2>Asignar Instructor a: <?= htmlspecialchars($dojo['nombre']) ?></h2>
+
+<form method="post" action="procesar_asignacion_instructor.php">
+    <input type="hidden" name="dojo_id" value="<?= $dojo_id ?>">
+
+    <label>Persona:</label>
+    <select name="persona_id" required>
+        <option value="">-- Seleccionar --</option>
+        <?php foreach ($personas as $p): ?>
+            <option value="<?= $p['id'] ?>"><?= $p['apellido'] ?>, <?= $p['nombre'] ?></option>
+        <?php endforeach; ?>
+    </select><br>
+
+    <label>Rol:</label>
+    <select name="rol" required>
+        <option value="">-- Seleccionar --</option>
+        <option value="principal">Principal</option>
+        <option value="adjunto">Adjunto</option>
+        <option value="administrativo">Administrativo</option>
+    </select><br>
+
+    <label>Grado:</label>
+    <input type="text" name="grado"><br>
+
+    <label>Desde:</label>
+    <input type="date" name="desde_fecha"><br>
+
+    <button type="submit">Asignar Instructor</button>
+</form>
+
+✅ 2. Nuevo archivo: procesar_asignacion_instructor.php
+
+<?php
+require_once 'includes/db.php';
+
+$dojo_id = $_POST['dojo_id'];
+$persona_id = $_POST['persona_id'];
+$rol = $_POST['rol'];
+$grado = $_POST['grado'] ?? null;
+$desde_fecha = $_POST['desde_fecha'] ?? null;
+
+$sql = "INSERT INTO instructores_por_dojo 
+    (dojo_id, persona_id, rol, grado, desde_fecha) 
+    VALUES (?, ?, ?, ?, ?)";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute([$dojo_id, $persona_id, $rol, $grado, $desde_fecha]);
+
+header("Location: editar_dojo.php?id=$dojo_id");
+exit;
+
+✅ 3. En editar_dojo.php: mostrar instructores asignados
+
+📍 Después del formulario, agregá esto para listar instructores actuales:
+
+<h3>Instructores Asignados</h3>
+
+<?php
+$stmt = $pdo->prepare("
+    SELECT p.nombre, p.apellido, ipd.rol, ipd.grado, ipd.desde_fecha
+    FROM instructores_por_dojo ipd
+    JOIN personas p ON ipd.persona_id = p.id
+    WHERE ipd.dojo_id = ?
+    ORDER BY ipd.rol
+");
+$stmt->execute([$dojo['id']]);
+$instructores = $stmt->fetchAll();
+
+if ($instructores):
+?>
+<table border="1" cellpadding="5">
+    <tr>
+        <th>Nombre</th><th>Rol</th><th>Grado</th><th>Desde</th>
+    </tr>
+    <?php foreach ($instructores as $i): ?>
+        <tr>
+            <td><?= $i['apellido'] ?>, <?= $i['nombre'] ?></td>
+            <td><?= $i['rol'] ?></td>
+            <td><?= $i['grado'] ?></td>
+            <td><?= $i['desde_fecha'] ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+<?php else: ?>
+<p>No hay instructores asignados aún.</p>
+<?php endif; ?>
+
+<a href="asignar_instructor.php?dojo_id=<?= $dojo['id'] ?>">➕ Asignar Instructor</a>
+
+📌 Opcional a futuro:
+
+    Permitir quitar instructores (eliminar_instructor.php)
+
+    Agregar validación para no repetir “principal” en un dojo si ya hay uno
+
+¿Querés que armemos ahora también esa eliminación de instructores y/o una validación para evitar duplicados de rol principal por dojo?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, Eduardo. Vamos a agregar dos mejoras:
+✅ 1. Eliminar instructor desde dojo
+📄 A. Agregá este enlace al listado de instructores en editar_dojo.php:
+
+Dentro del <td> final de cada fila:
+
+<td>
+  <a href="eliminar_instructor.php?id=<?= $i['id'] ?>&dojo_id=<?= $dojo['id'] ?>" onclick="return confirm('¿Eliminar este instructor?')">❌</a>
+</td>
+
+    Asegurate de que el SELECT también devuelva ipd.id para que $i['id'] funcione:
+
+SELECT ipd.id, p.nombre, p.apellido, ipd.rol, ipd.grado, ipd.desde_fecha
+
+📄 B. Nuevo archivo: eliminar_instructor.php
+
+<?php
+require_once 'includes/db.php';
+
+$id = $_GET['id'] ?? null;
+$dojo_id = $_GET['dojo_id'] ?? null;
+
+if ($id && $dojo_id) {
+    $stmt = $pdo->prepare("DELETE FROM instructores_por_dojo WHERE id = ?");
+    $stmt->execute([$id]);
+}
+
+header("Location: editar_dojo.php?id=$dojo_id");
+exit;
+
+✅ 2. Evitar más de un rol 'principal' por dojo
+📄 En procesar_asignacion_instructor.php, antes del INSERT, agregá:
+
+// Validar que no haya ya un 'principal' en ese dojo
+if ($rol === 'principal') {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM instructores_por_dojo WHERE dojo_id = ? AND rol = 'principal'");
+    $stmt->execute([$dojo_id]);
+    $ya_existe = $stmt->fetchColumn();
+
+    if ($ya_existe > 0) {
+        echo "⚠️ Ya hay un instructor principal asignado a este dojo.";
+        echo "<br><a href='editar_dojo.php?id=$dojo_id'>Volver</a>";
+        exit;
+    }
+}
+
+Con esto:
+
+    Podés asignar instructores a dojos sin límites.
+
+    Garantizás que solo haya uno con rol 'principal' por dojo.
+
+    Podés eliminar instructores cuando sea necesario.
+
+¿Querés también un buscador general de instructores para saber en qué dojos enseña cada uno?
 

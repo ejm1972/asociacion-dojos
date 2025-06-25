@@ -1,0 +1,1384 @@
+crear esquema.sql para BD mysql
+ChatGPT dijo:
+
+Para crear un archivo esquema.sql para una base de datos MySQL a partir del archivo Excel que compartiste (Datero Socios v3.xlsx), primero voy a analizar su contenido y luego generaré las sentencias CREATE TABLE correspondientes.
+
+Voy a comenzar por revisar la estructura del archivo. Un momento…
+
+El archivo contiene dos hojas:
+
+    Datos Personales
+
+    Datos Aikido
+
+Voy a revisar el contenido de cada hoja para inferir la estructura de las tablas y luego generar el SQL correspondiente. Comienzo con la hoja "Datos Personales".
+
+La hoja "Datos Personales" tiene varios encabezados vacíos al principio y comienza realmente en la fila 5 (índice 4), donde aparecen los nombres de los campos. Procederé a limpiar esto para generar una estructura clara de tabla.
+
+La hoja "Datos Personales" tiene las siguientes columnas que podemos usar para una tabla SQL:
+
+    Fecha inscripción
+
+    Apellido y Nombre (completo por documento)
+
+    DNI
+
+    Fecha Nacimiento
+
+    Lugar Nacimiento
+
+    Sexo
+
+    Teléfono
+
+    Nacionalidad
+
+    eMail
+
+    Domicilio Postal (completo con CP)
+
+    Estado Civil
+
+    Impedimentos Físicos
+
+    Fecha Verificación del Mail
+
+    Observaciones
+
+    Imagen Frente y Dorso DNI (nítidas)
+
+    Firma Digital
+
+Ahora analizo la hoja "Datos Aikido" para crear su tabla correspondiente.
+
+Parece que no puedo hacer un análisis de datos más avanzado en este momento. Por favor, intentá nuevamente más tarde.
+
+Sin embargo, ya tengo la estructura de la hoja "Datos Personales" y puedo generar el SQL para esa parte. ¿Querés que continúe con la creación del esquema.sql solo con la tabla de datos personales por ahora? También podés subir una versión simplificada o CSV de la hoja "Datos Aikido" si preferís.
+Dijiste:
+datos aikido
+Graduación actual	(Examinador y fecha del exámen)	Dojo Actual	Instructor	Antecedentes en Aikido	Cambios Producidos (a completar por la administración)	Observaciones Importantes	Yudansha	Clases
+				(Tiempo de practica, dojos anteriores, etc etc, si corresponiera)	Para Administración: (Detalle de los cambios)(Ej.: asentar datos anteriores al cambiar de graduación o de dojo)		(Imágenes de todas las hojas con número de registro, nítidas)	420
+								460
+ChatGPT dijo:
+
+Gracias por la imagen, eso ayuda. Ya con los encabezados de la hoja Datos Aikido, puedo incluir su estructura en el esquema.sql.
+Tablas que propongo generar:
+
+    personas: con los datos personales.
+
+    datos_aikido: con los datos de práctica, vinculada a personas por DNI u otro identificador.
+
+🗃️ SQL — Esquema Base de Datos MySQL
+
+CREATE TABLE personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    nombre_completo VARCHAR(100),
+    dni VARCHAR(15) UNIQUE,
+    fecha_nacimiento DATE,
+    lugar_nacimiento VARCHAR(100),
+    sexo VARCHAR(10),
+    telefono VARCHAR(30),
+    nacionalidad VARCHAR(50),
+    email VARCHAR(100),
+    domicilio_postal TEXT,
+    estado_civil VARCHAR(50),
+    impedimentos_fisicos TEXT,
+    fecha_verificacion_mail DATE,
+    observaciones TEXT,
+    imagen_dni TEXT,
+    firma_digital TEXT
+);
+
+CREATE TABLE datos_aikido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT,
+    graduacion_actual VARCHAR(50),
+    examinador_fecha_examen VARCHAR(100),
+    dojo_actual VARCHAR(100),
+    instructor VARCHAR(100),
+    antecedentes TEXT,
+    cambios_producidos TEXT,
+    observaciones_importantes TEXT,
+    yudansha TEXT,
+    clases INT,
+    FOREIGN KEY (persona_id) REFERENCES personas(id)
+);
+
+🔍 Notas:
+
+    persona_id en datos_aikido vincula con personas.id.
+
+    Los textos como "Imagen DNI", "Firma Digital", "Yudansha" están como TEXT, pero se pueden convertir a rutas de archivos o referencias si usás almacenamiento externo.
+
+    Si preferís usar el DNI como clave externa en vez de un id numérico, también es posible.
+
+¿Querés que genere este .sql como archivo descargable? ¿O preferís agregar más tablas como dojos, instructores, etc.?
+Dijiste:
+agrego dojos, instructores 
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+REATE TABLE IF NOT EXISTS -- Tabla dojos (extendida)
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Tabla intermedia: instructores por dojo
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+relacionar con la tabla personas anterior
+ChatGPT dijo:
+
+Perfecto, con la tabla dojos y la intermedia instructores_por_dojo bien definidas, ya podemos integrar todo el esquema relacional. Abajo te muestro el esquema completo unificado, limpio y corregido (había una línea duplicada y un typo en REATE).
+🧩 Esquema Completo — esquema.sql
+
+-- Tabla principal de personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    nombre_completo VARCHAR(100),
+    dni VARCHAR(15) UNIQUE,
+    fecha_nacimiento DATE,
+    lugar_nacimiento VARCHAR(100),
+    sexo VARCHAR(10),
+    telefono VARCHAR(30),
+    nacionalidad VARCHAR(50),
+    email VARCHAR(100),
+    domicilio_postal TEXT,
+    estado_civil VARCHAR(50),
+    impedimentos_fisicos TEXT,
+    fecha_verificacion_mail DATE,
+    observaciones TEXT,
+    imagen_dni TEXT,
+    firma_digital TEXT
+);
+
+-- Tabla de dojos (extendida)
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Tabla intermedia: instructores por dojo
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+-- Datos específicos de aikido por persona
+CREATE TABLE IF NOT EXISTS datos_aikido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    graduacion_actual VARCHAR(50),
+    examinador_fecha_examen VARCHAR(100),
+    dojo_actual VARCHAR(100),
+    instructor VARCHAR(100),
+    antecedentes TEXT,
+    cambios_producidos TEXT,
+    observaciones_importantes TEXT,
+    yudansha TEXT,
+    clases INT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+✅ Ventajas de este diseño
+
+    Separación lógica entre personas, dojos y relaciones.
+
+    Escalable: se puede agregar historial de exámenes, licencias, clases, etc.
+
+    Flexible: permite múltiples instructores por dojo y múltiples dojos por instructor.
+
+¿Querés que te lo genere como archivo .sql para descarga? ¿Te gustaría agregar algo más como historial de exámenes, licencias o asistencia?
+Dijiste:
+que la persona participe en un dojo
+que la persona tenga historial de exámenes
+que esos examenes tengan relacionado el dojo y el instructor que los presenta
+ChatGPT dijo:
+
+Perfecto, ahora integramos tres nuevas necesidades clave:
+
+    Participación de personas en dojos (no como instructores).
+
+    Historial de exámenes por persona.
+
+    Relación de cada examen con un dojo y un instructor.
+
+🧩 Nuevas tablas y relaciones:
+🧍‍♂️ Participación de una persona en un dojo:
+
+CREATE TABLE IF NOT EXISTS personas_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    dojo_id INT NOT NULL,
+    desde_fecha DATE,
+    hasta_fecha DATE,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE
+);
+
+    Esto permite registrar una permanencia con fechas (útil si la persona cambia de dojo).
+
+📜 Historial de exámenes:
+
+CREATE TABLE IF NOT EXISTS examenes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    graduacion_obtenida VARCHAR(50),
+    dojo_id INT,
+    instructor_id INT,
+    observaciones TEXT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE SET NULL,
+    FOREIGN KEY (instructor_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+    Cada examen se vincula con:
+
+    La persona que lo rindió.
+
+    El dojo donde fue presentado.
+
+    El instructor que lo examinó (también una persona).
+
+🔄 Relación con el resto del esquema
+
+Estas nuevas tablas complementan las anteriores:
+
+    personas tiene vínculos hacia:
+
+        datos_aikido
+
+        instructores_por_dojo
+
+        personas_por_dojo
+
+        examenes (como evaluado y como evaluador)
+
+¿Querés que combine esto en el archivo .sql completo?
+
+Puedo armarlo listo para importación o ejecución directa en MySQL, o incluso prepararlo para un entorno como PhpMyAdmin o Workbench. ¿Querés que te lo exporte?
+Dijiste:
+para copiar y pegar 
+ChatGPT dijo:
+
+Perfecto. Acá tenés el esquema completo listo para copiar y pegar directamente en tu entorno MySQL (Workbench, PhpMyAdmin, CLI, etc.).
+🧩 esquema.sql completo
+
+-- Tabla de personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    nombre_completo VARCHAR(100),
+    dni VARCHAR(15) UNIQUE,
+    fecha_nacimiento DATE,
+    lugar_nacimiento VARCHAR(100),
+    sexo VARCHAR(10),
+    telefono VARCHAR(30),
+    nacionalidad VARCHAR(50),
+    email VARCHAR(100),
+    domicilio_postal TEXT,
+    estado_civil VARCHAR(50),
+    impedimentos_fisicos TEXT,
+    fecha_verificacion_mail DATE,
+    observaciones TEXT,
+    imagen_dni TEXT,
+    firma_digital TEXT
+);
+
+-- Tabla de dojos
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    
+    responsable_admin_id INT,
+    
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Instructores por dojo (relación muchos a muchos con rol)
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+-- Participación general de personas en dojos (no instructores)
+CREATE TABLE IF NOT EXISTS personas_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    dojo_id INT NOT NULL,
+    desde_fecha DATE,
+    hasta_fecha DATE,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE
+);
+
+-- Datos generales de aikido
+CREATE TABLE IF NOT EXISTS datos_aikido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    graduacion_actual VARCHAR(50),
+    examinador_fecha_examen VARCHAR(100),
+    dojo_actual VARCHAR(100),
+    instructor VARCHAR(100),
+    antecedentes TEXT,
+    cambios_producidos TEXT,
+    observaciones_importantes TEXT,
+    yudansha TEXT,
+    clases INT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+-- Historial de exámenes
+CREATE TABLE IF NOT EXISTS examenes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    graduacion_obtenida VARCHAR(50),
+    dojo_id INT,
+    instructor_id INT,
+    observaciones TEXT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE SET NULL,
+    FOREIGN KEY (instructor_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+Este diseño cubre:
+
+✅ Registro de personas, dojos, instructores y practicantes
+✅ Historial de participación y exámenes
+✅ Relación clara entre instructores, alumnos y dojos
+
+¿Querés que lo acompañe con algunos INSERT de ejemplo o consultas frecuentes (JOIN, WHERE, etc.)?
+Dijiste:
+agregar el cobro de cuotas de las personas
+ChatGPT dijo:
+
+¡Perfecto! Para registrar el cobro de cuotas, vamos a agregar una nueva tabla cuotas, que almacene pagos realizados por cada persona, permitiendo control mensual, monto, método de pago, estado, etc.
+🧾 Tabla cuotas
+
+CREATE TABLE IF NOT EXISTS cuotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    periodo_mes TINYINT NOT NULL,         -- 1 a 12
+    periodo_anio SMALLINT NOT NULL,       -- Ej: 2025
+    monto DECIMAL(10,2) NOT NULL,
+    metodo_pago VARCHAR(50),              -- efectivo, transferencia, débito, etc.
+    observaciones TEXT,
+    pagado BOOLEAN DEFAULT TRUE,
+
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+✅ Ventajas de este diseño:
+
+    Un pago por persona por mes-año (gracias a la clave única persona_id + mes + año).
+
+    Soporta diferentes métodos de pago.
+
+    Puede registrar pagos pendientes (pagado = FALSE).
+
+    fecha_pago: cuándo se pagó.
+    fecha_registro: cuándo se cargó en el sistema (útil si se paga en ventanilla pero se carga después).
+
+Ejemplo de uso:
+
+-- Registro de una cuota de marzo 2025
+INSERT INTO cuotas (persona_id, fecha_pago, periodo_mes, periodo_anio, monto, metodo_pago)
+VALUES (1, '2025-03-05', 3, 2025, 4500.00, 'transferencia');
+
+¿Querés también:
+
+    llevar valores esperados por dojo o por persona (por ejemplo, si hay montos distintos)?
+
+    registrar cuotas vencidas o condonadas?
+
+    generar una vista para ver fácilmente el estado de pagos mensuales?
+
+Te puedo ayudar con eso también.
+Dijiste:
+si, dale
+ChatGPT dijo:
+
+Genial. Vamos a extender el esquema para incluir:
+1. 💲Valores de cuota esperados por dojo o persona
+
+Esto permite:
+
+    Definir un monto base por dojo.
+
+    Personalizarlo si una persona tiene un valor diferente.
+
+-- Monto estándar de cuota por dojo
+CREATE TABLE IF NOT EXISTS cuotas_valores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    desde_fecha DATE NOT NULL,
+
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE
+);
+
+-- Excepciones individuales por persona
+CREATE TABLE IF NOT EXISTS cuotas_valores_personalizados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    desde_fecha DATE NOT NULL,
+    observaciones TEXT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+2. ❗️Cuotas vencidas, condonadas o no pagadas
+
+Agregamos campos a la tabla cuotas:
+
+ALTER TABLE cuotas
+ADD COLUMN vencida BOOLEAN DEFAULT FALSE,
+ADD COLUMN condonada BOOLEAN DEFAULT FALSE;
+
+        vencida = TRUE si se pasó la fecha esperada de pago (la lógica va del lado de la app o procedimiento).
+
+        condonada = TRUE si se decide perdonar esa cuota.
+
+3. 👁 Vista: estado de cuotas por persona
+
+Ejemplo de una vista mensual que muestra pagado, vencido o condonado:
+
+CREATE VIEW vista_estado_cuotas AS
+SELECT 
+    p.id AS persona_id,
+    p.nombre_completo,
+    c.periodo_mes,
+    c.periodo_anio,
+    c.monto,
+    c.pagado,
+    c.vencida,
+    c.condonada,
+    c.metodo_pago,
+    c.fecha_pago
+FROM personas p
+LEFT JOIN cuotas c ON c.persona_id = p.id
+ORDER BY p.nombre_completo, c.periodo_anio, c.periodo_mes;
+
+¿Cómo se decide el monto a cobrar?
+
+Lo habitual sería:
+
+    Buscar en cuotas_valores_personalizados para esa persona y mes/año.
+
+    Si no hay, tomar el último valor de cuotas_valores_por_dojo válido para ese dojo.
+
+Eso lo implementás desde la lógica de aplicación, o se puede crear un procedimiento almacenado si querés mantenerlo dentro de MySQL.
+
+¿Querés que prepare un ejemplo de procedimiento o trigger para calcular automáticamente el monto al insertar una cuota?
+
+como se resuelve tener el historial de graduaciones y obtener la graducion actual en este esquema
+ChatGPT dijo:
+
+Excelente pregunta. Tener un historial de graduaciones y poder consultar fácilmente la graduación actual se resuelve de forma limpia con una tabla de historial bien diseñada y una consulta (o vista) que devuelva la más reciente.
+🗃️ Paso 1: Tabla de historial de graduaciones
+
+CREATE TABLE IF NOT EXISTS historial_graduaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    graduacion VARCHAR(50) NOT NULL,
+    dojo_id INT,
+    instructor_id INT,
+    observaciones TEXT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE SET NULL,
+    FOREIGN KEY (instructor_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+    Esta tabla reemplaza (o mejora) lo que datos_aikido.graduacion_actual y examinador_fecha_examen intentaban registrar.
+
+✅ Paso 2: Obtener graduación actual
+
+Usamos una vista con la graduación más reciente por persona:
+
+CREATE VIEW vista_graduacion_actual AS
+SELECT h1.*
+FROM historial_graduaciones h1
+JOIN (
+    SELECT persona_id, MAX(fecha) AS fecha_max
+    FROM historial_graduaciones
+    GROUP BY persona_id
+) h2
+ON h1.persona_id = h2.persona_id AND h1.fecha = h2.fecha_max;
+
+    Esta vista devuelve UNA fila por persona con la graduación más reciente, incluyendo dojo, instructor, etc.
+
+🧼 ¿Y la tabla datos_aikido?
+
+Te recomiendo que:
+
+    Le elimines los campos graduacion_actual y examinador_fecha_examen, que ahora quedan obsoletos.
+
+    Conserves allí solo cosas no repetitivas como: antecedentes, observaciones, si es yudansha, etc.
+
+🧪 Ejemplo de consulta
+
+-- Graduación actual de Juan Pérez
+SELECT v.graduacion, v.fecha, p.nombre_completo
+FROM vista_graduacion_actual v
+JOIN personas p ON v.persona_id = p.id
+WHERE p.nombre_completo = 'Juan Pérez';
+
+¿Querés que agregue un trigger que actualice un campo graduacion_actual en personas al insertar en el historial? También es posible si preferís mantener una columna de acceso directo.
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, si querés mantener una columna graduacion_actual en la tabla personas para acceso rápido (sin hacer JOIN), podés hacerlo con un AFTER INSERT trigger que actualice ese campo cada vez que se agregue un nuevo registro a historial_graduaciones.
+🛠 Paso 1: Agregar columna en personas
+
+ALTER TABLE personas
+ADD COLUMN graduacion_actual VARCHAR(50);
+
+🧲 Paso 2: Crear trigger
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_graduacion_actual
+AFTER INSERT ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE fecha_max DATE;
+
+  -- Obtenemos la última fecha de graduación de la persona
+  SELECT MAX(fecha)
+  INTO fecha_max
+  FROM historial_graduaciones
+  WHERE persona_id = NEW.persona_id;
+
+  -- Si la nueva fecha es la más reciente, actualizamos
+  IF NEW.fecha = fecha_max THEN
+    UPDATE personas
+    SET graduacion_actual = NEW.graduacion
+    WHERE id = NEW.persona_id;
+  END IF;
+END$$
+
+DELIMITER ;
+
+🔄 ¿Qué hace esto?
+
+Cada vez que se inserta una nueva graduación:
+
+    Se verifica si es la más reciente.
+
+    Si lo es, se actualiza el campo graduacion_actual en personas.
+
+Opcional: mantener actualizado también en caso de UPDATE/DELETE
+
+Esto es más complejo, pero si querés te puedo preparar triggers AFTER UPDATE y AFTER DELETE que recalculen la graduación actual si se modifica o elimina una entrada. ¿Querés incluirlos también?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Vamos a crear dos triggers adicionales para mantener la columna graduacion_actual siempre actualizada:
+🧩 Resumen de lo que haremos:
+
+    AFTER INSERT: Ya lo hicimos → actualiza si la nueva graduación es la más reciente.
+
+    AFTER UPDATE: Recalcula la graduación actual si cambia la fecha o el grado.
+
+    AFTER DELETE: Recalcula la graduación actual si se borra el último registro.
+
+✅ Paso 1: Trigger AFTER UPDATE
+
+DELIMITER $$
+
+CREATE TRIGGER recalcular_graduacion_actual_update
+AFTER UPDATE ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE graduacion_nueva VARCHAR(50);
+
+  SELECT graduacion
+  INTO graduacion_nueva
+  FROM historial_graduaciones
+  WHERE persona_id = NEW.persona_id
+  ORDER BY fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET graduacion_actual = graduacion_nueva
+  WHERE id = NEW.persona_id;
+END$$
+
+DELIMITER ;
+
+✅ Paso 2: Trigger AFTER DELETE
+
+DELIMITER $$
+
+CREATE TRIGGER recalcular_graduacion_actual_delete
+AFTER DELETE ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE graduacion_nueva VARCHAR(50);
+
+  SELECT graduacion
+  INTO graduacion_nueva
+  FROM historial_graduaciones
+  WHERE persona_id = OLD.persona_id
+  ORDER BY fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET graduacion_actual = graduacion_nueva
+  WHERE id = OLD.persona_id;
+END$$
+
+DELIMITER ;
+
+🔄 ¿Qué logramos con esto?
+
+    La columna personas.graduacion_actual siempre refleja el grado más reciente, sin necesidad de hacer JOIN o consultar la vista.
+
+    Se actualiza automáticamente con INSERT, UPDATE o DELETE.
+
+¿Querés que prepare también algo similar para el dojo actual en el que practica la persona (personas.dojo_actual_id)? Es común cuando alguien cambia de sede.
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto. Para manejar el dojo actual de una persona, vamos a trabajar con la tabla personas_por_dojo, que representa la historia de participación de una persona en distintos dojos.
+🧩 Lo que vamos a hacer:
+
+    Agregar columna dojo_actual_id en personas.
+
+    Crear triggers (INSERT, UPDATE, DELETE) sobre personas_por_dojo que mantengan actualizado el dojo más reciente.
+
+✅ Paso 1: Agregar campo dojo_actual_id en personas
+
+ALTER TABLE personas
+ADD COLUMN dojo_actual_id INT,
+ADD FOREIGN KEY (dojo_actual_id) REFERENCES dojos(id) ON DELETE SET NULL;
+
+✅ Paso 2: Trigger AFTER INSERT en personas_por_dojo
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_dojo_actual_insert
+AFTER INSERT ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE fecha_max DATE;
+  DECLARE dojo_ultimo INT;
+
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = NEW.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = NEW.persona_id;
+END$$
+
+DELIMITER ;
+
+✅ Paso 3: Trigger AFTER UPDATE en personas_por_dojo
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_dojo_actual_update
+AFTER UPDATE ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE dojo_ultimo INT;
+
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = NEW.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = NEW.persona_id;
+END$$
+
+DELIMITER ;
+
+✅ Paso 4: Trigger AFTER DELETE en personas_por_dojo
+
+DELIMITER $$
+
+CREATE TRIGGER actualizar_dojo_actual_delete
+AFTER DELETE ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE dojo_ultimo INT;
+
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = OLD.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = OLD.persona_id;
+END$$
+
+DELIMITER ;
+
+🧼 Resultado
+
+La columna personas.dojo_actual_id estará siempre sincronizada con el último dojo asociado en su historial (personas_por_dojo) según la fecha desde_fecha.
+
+¿Querés que prepare también un VIEW que combine todo el estado actual (persona, graduación, dojo, última cuota)?
+Dijiste:
+si
+ChatGPT dijo:
+
+Excelente. Vamos a crear una vista resumen que combine lo siguiente:
+
+    Persona (nombre, DNI, contacto)
+
+    Graduación actual
+
+    Dojo actual (nombre, ciudad)
+
+    Última cuota paga (mes, año, monto)
+
+🧩 Vista: vista_estado_actual_personas
+
+CREATE VIEW vista_estado_actual_personas AS
+SELECT
+  p.id AS persona_id,
+  p.nombre_completo,
+  p.dni,
+  p.email,
+  p.telefono,
+  p.graduacion_actual,
+  
+  d.nombre AS dojo_actual_nombre,
+  d.ciudad AS dojo_actual_ciudad,
+  
+  c.periodo_mes AS ultimo_mes_pagado,
+  c.periodo_anio AS ultimo_anio_pagado,
+  c.monto AS ultimo_monto_pagado,
+  c.fecha_pago AS fecha_ultimo_pago,
+  c.metodo_pago
+  
+FROM personas p
+LEFT JOIN dojos d ON p.dojo_actual_id = d.id
+
+LEFT JOIN (
+  SELECT c1.*
+  FROM cuotas c1
+  JOIN (
+    SELECT persona_id, MAX(CONCAT(periodo_anio, LPAD(periodo_mes, 2, '0'))) AS periodo_max
+    FROM cuotas
+    WHERE pagado = TRUE
+    GROUP BY persona_id
+  ) c2
+  ON c1.persona_id = c2.persona_id
+     AND CONCAT(c1.periodo_anio, LPAD(c1.periodo_mes, 2, '0')) = c2.periodo_max
+) c ON p.id = c.persona_id;
+
+🧪 ¿Qué devuelve?
+
+Una fila por persona con:
+
+    Graduación actual (p.graduacion_actual)
+
+    Dojo actual (p.dojo_actual_id → nombre y ciudad)
+
+    Última cuota paga (mes/año, monto, método)
+
+✅ Ejemplo de uso
+
+SELECT * FROM vista_estado_actual_personas WHERE nombre_completo LIKE '%Juana%';
+
+🔄 ¿Querés agregar filtros como:
+
+    ¿Quiénes están con cuota vencida?
+
+    ¿Quiénes no tienen dojo asignado?
+
+    ¿O que sean instructores?
+
+También se puede crear vistas específicas o consultas con filtros. ¿Te gustaría eso también?
+Dijiste:
+si
+ChatGPT dijo:
+
+Perfecto, a continuación te dejo consultas filtradas útiles y opcionales que podés adaptar o convertir en VIEWs si querés acceso rápido desde la app o desde reportes.
+🔎 1. Personas sin dojo actual
+
+SELECT *
+FROM personas
+WHERE dojo_actual_id IS NULL;
+
+🔎 2. Personas con cuota vencida (último pago anterior a mayo 2025, por ejemplo)
+
+SELECT p.id, p.nombre_completo, c.periodo_mes, c.periodo_anio, c.fecha_pago
+FROM personas p
+LEFT JOIN (
+  SELECT c1.*
+  FROM cuotas c1
+  JOIN (
+    SELECT persona_id, MAX(CONCAT(periodo_anio, LPAD(periodo_mes, 2, '0'))) AS periodo_max
+    FROM cuotas
+    WHERE pagado = TRUE
+    GROUP BY persona_id
+  ) c2
+  ON c1.persona_id = c2.persona_id
+     AND CONCAT(c1.periodo_anio, LPAD(c1.periodo_mes, 2, '0')) = c2.periodo_max
+) c ON p.id = c.persona_id
+WHERE CONCAT(c.periodo_anio, LPAD(c.periodo_mes, 2, '0')) < '202505';
+
+    Cambiá '202505' por el mes/año que quieras considerar como corte.
+
+🔎 3. Personas que nunca pagaron cuota
+
+SELECT p.*
+FROM personas p
+LEFT JOIN cuotas c ON p.id = c.persona_id
+WHERE c.id IS NULL;
+
+🔎 4. Personas que son instructores activos
+
+SELECT DISTINCT p.id, p.nombre_completo, i.rol, d.nombre AS dojo
+FROM instructores_por_dojo i
+JOIN personas p ON i.persona_id = p.id
+JOIN dojos d ON i.dojo_id = d.id
+WHERE i.desde_fecha <= CURDATE();
+
+    Si agregás un campo hasta_fecha, podés usarlo también para determinar si sigue siendo activo.
+
+🧩 ¿Querés convertir alguna de estas en VIEW?
+
+Podés hacer por ejemplo:
+
+CREATE VIEW vista_instructores_activos AS
+SELECT ...;
+
+¿Querés que prepare un dashboard SQL con múltiples vistas o una consulta que combine filtros (como cuota vencida + sin dojo + sin graduación)?
+Dijiste:
+no, necesito aclarar que las cuotas son de las personas pero no hacia el dojo sino es una membresía para la asociación en la que participa el dojo
+ChatGPT dijo:
+
+Gracias por la aclaración, es muy importante y cambia la perspectiva del diseño. Ahora entendemos que:
+
+    Las cuotas no son hacia el dojo, sino una membresía personal hacia la Asociación (ADA u otra) en la que participa el dojo.
+
+✅ ¿Qué implica este cambio?
+
+    La tabla cuotas sigue siendo correcta, porque el pago es de la persona, pero:
+
+    No tiene que haber una relación directa con el dojo en la cuota.
+
+    Podemos mantener opcionalmente el dojo en que la persona estaba al momento del pago, solo como referencia histórica, si querés.
+
+🛠 Actualización sugerida de cuotas:
+
+CREATE TABLE IF NOT EXISTS cuotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    periodo_mes TINYINT NOT NULL,
+    periodo_anio SMALLINT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    metodo_pago VARCHAR(50),
+    observaciones TEXT,
+    pagado BOOLEAN DEFAULT TRUE,
+    vencida BOOLEAN DEFAULT FALSE,
+    condonada BOOLEAN DEFAULT FALSE,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Solo si querés conservar una referencia al dojo en que estaba inscrito
+    dojo_id INT,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE SET NULL,
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+    dojo_id es opcional, y solo sirve para saber en qué dojo estaba la persona al momento del pago. No implica que el dojo reciba el dinero.
+
+🧾 ¿Quién recibe el pago?
+
+En este modelo, la Asociación (ADA) recibe el dinero directamente o a través de un mecanismo interno. Si querés llevar registro contable más preciso a nivel de Asociación, podés hacer:
+
+CREATE TABLE IF NOT EXISTS ingresos_asociacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cuota_id INT,
+    concepto VARCHAR(100), -- Ej: "Membresía mensual", "Cuota anual"
+    fecha_ingreso DATE,
+    monto DECIMAL(10,2),
+    referencia_interna TEXT,
+
+    FOREIGN KEY (cuota_id) REFERENCES cuotas(id) ON DELETE SET NULL
+);
+
+¿Querés modelar los ingresos de la Asociación o dejarlo solo en la tabla cuotas?
+
+También podemos modelar gastos, subsidios a dojos, etc., si es relevante.
+Dijiste:
+´por ahora lo dejamos en la tabla cuotas
+ChatGPT dijo:
+
+Perfecto, entonces mantenemos el diseño simple y funcional, con todo en la tabla cuotas, sin asociarlo como ingreso directo al dojo.
+✅ Estado actual de la tabla cuotas (actualizada y alineada con tu aclaración):
+
+CREATE TABLE IF NOT EXISTS cuotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    periodo_mes TINYINT NOT NULL,         -- 1 a 12
+    periodo_anio SMALLINT NOT NULL,       -- Ej: 2025
+    monto DECIMAL(10,2) NOT NULL,
+    metodo_pago VARCHAR(50),              -- efectivo, transferencia, etc.
+    observaciones TEXT,
+    pagado BOOLEAN DEFAULT TRUE,
+    vencida BOOLEAN DEFAULT FALSE,
+    condonada BOOLEAN DEFAULT FALSE,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+    Podés seguir mostrando, consultando y cruzando los pagos por persona, dojo activo, graduación, etc., desde las vistas que ya armamos (vista_estado_actual_personas, etc.).
+
+Cuando quieras, podemos avanzar con:
+
+    Reportes por año (por ejemplo, total recaudado por mes).
+
+    Dashboard de pagos y deuda.
+
+    Exportaciones a Excel o PDF.
+
+    Gestión de cuotas especiales (anuales, exentas, etc.).
+
+¿Querés que te deje ahora una consulta para ver deuda acumulada por persona (cuotas que deberían estar pagas pero no lo están)?
+Dijiste:
+no, quisiera registrar la asistencia de las personas que participan en un dojo pero no sía a día sino como un ingresó por período mensual que el responsable del dojo debería mantener
+ChatGPT dijo:
+
+Excelente, eso se puede modelar muy claramente. Lo que estás describiendo es:
+
+    Un registro mensual de asistencia (o participación) que mantiene el responsable del dojo, no asistencia diaria.
+
+✅ Solución: tabla asistencia_mensual
+
+Esta tabla resume la participación mensual de una persona en un dojo, sin detallar cada clase.
+
+CREATE TABLE IF NOT EXISTS asistencia_mensual (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    dojo_id INT NOT NULL,
+    periodo_mes TINYINT NOT NULL,       -- 1 a 12
+    periodo_anio SMALLINT NOT NULL,     -- Ej: 2025
+
+    cantidad_clases INT,                -- opcional: cuántas veces asistió
+    observaciones TEXT,                -- Ej: “asistió regularmente”, “solo 2 clases”, etc.
+
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    registrado_por_id INT,              -- quién lo cargó (el responsable)
+
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (registrado_por_id) REFERENCES personas(id) ON DELETE SET NULL,
+
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+🧩 ¿Qué permite esto?
+
+    Saber quién asistió regularmente cada mes, sin manejar asistencia diaria.
+
+    Saber en qué dojo participó.
+
+    Permite reportes mensuales de actividad por dojo o persona.
+
+    Registra quién cargó el dato (por seguridad y trazabilidad).
+
+📝 Ejemplo de uso
+
+-- Registrar que Juan Pérez asistió a 8 clases en mayo 2025 en Dojo N°3
+INSERT INTO asistencia_mensual (
+    persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id
+) VALUES (
+    1, 3, 5, 2025, 8, 'Participación completa del mes', 12
+);
+
+🧠 Opcional
+
+¿Querés también:
+
+    Poder marcar ausencias justificadas?
+
+    Saber si alguien interrumpió su práctica ese mes?
+
+    Vincular este registro con el cobro de la cuota (por ejemplo, “asistió pero no pagó”)?
+
+Podemos extender esto cuando quieras. ¿Querés que agregue esta tabla al esquema completo final que venís armando?
+Dijiste:
+si quiero agregar esto al esquema completo para copiar y pegar
+ChatGPT dijo:
+
+Perfecto. A continuación te dejo el esquema completo actualizado con todo lo que definimos, incluyendo:
+
+    Personas, dojos, relaciones
+
+    Historial de graduaciones + trigger para mantener la graduación actual
+
+    Participación en dojos
+
+    Cuotas (como membresía a la Asociación)
+
+    Asistencia mensual (registro mensual por dojo)
+
+    Triggers para mantener graduacion_actual y dojo_actual_id
+
+🧩 ESQUEMA COMPLETO ACTUALIZADO PARA COPIAR Y PEGAR
+
+-- Tabla principal de personas
+CREATE TABLE IF NOT EXISTS personas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_inscripcion DATE,
+    nombre_completo VARCHAR(100),
+    dni VARCHAR(15) UNIQUE,
+    fecha_nacimiento DATE,
+    lugar_nacimiento VARCHAR(100),
+    sexo VARCHAR(10),
+    telefono VARCHAR(30),
+    nacionalidad VARCHAR(50),
+    email VARCHAR(100),
+    domicilio_postal TEXT,
+    estado_civil VARCHAR(50),
+    impedimentos_fisicos TEXT,
+    fecha_verificacion_mail DATE,
+    observaciones TEXT,
+    imagen_dni TEXT,
+    firma_digital TEXT,
+    graduacion_actual VARCHAR(50),
+    dojo_actual_id INT,
+    FOREIGN KEY (dojo_actual_id) REFERENCES dojos(id) ON DELETE SET NULL
+);
+
+-- Tabla de dojos
+CREATE TABLE IF NOT EXISTS dojos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    ciudad VARCHAR(100),
+    provincia VARCHAR(100),
+    pais VARCHAR(100),
+    direccion VARCHAR(150),
+    fecha_inicio DATE,
+    rama_dependencia VARCHAR(100),
+    fecha_ingreso_ada DATE,
+    responsable_admin_id INT,
+    celular VARCHAR(50),
+    mail VARCHAR(100),
+    observaciones TEXT,
+    FOREIGN KEY (responsable_admin_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Relación: instructores por dojo
+CREATE TABLE IF NOT EXISTS instructores_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    dojo_id INT NOT NULL,
+    persona_id INT NOT NULL,
+    rol ENUM('principal', 'adjunto', 'administrativo') NOT NULL,
+    grado VARCHAR(50),
+    desde_fecha DATE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
+);
+
+-- Participación general en un dojo (historial)
+CREATE TABLE IF NOT EXISTS personas_por_dojo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    dojo_id INT NOT NULL,
+    desde_fecha DATE,
+    hasta_fecha DATE,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE
+);
+
+-- Historial de graduaciones
+CREATE TABLE IF NOT EXISTS historial_graduaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    graduacion VARCHAR(50) NOT NULL,
+    dojo_id INT,
+    instructor_id INT,
+    observaciones TEXT,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE SET NULL,
+    FOREIGN KEY (instructor_id) REFERENCES personas(id) ON DELETE SET NULL
+);
+
+-- Cuotas como membresía a la Asociación
+CREATE TABLE IF NOT EXISTS cuotas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    periodo_mes TINYINT NOT NULL,
+    periodo_anio SMALLINT NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    metodo_pago VARCHAR(50),
+    observaciones TEXT,
+    pagado BOOLEAN DEFAULT TRUE,
+    vencida BOOLEAN DEFAULT FALSE,
+    condonada BOOLEAN DEFAULT FALSE,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+-- Registro mensual de asistencia en dojo
+CREATE TABLE IF NOT EXISTS asistencia_mensual (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    persona_id INT NOT NULL,
+    dojo_id INT NOT NULL,
+    periodo_mes TINYINT NOT NULL,
+    periodo_anio SMALLINT NOT NULL,
+    cantidad_clases INT,
+    observaciones TEXT,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    registrado_por_id INT,
+    FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE,
+    FOREIGN KEY (dojo_id) REFERENCES dojos(id) ON DELETE CASCADE,
+    FOREIGN KEY (registrado_por_id) REFERENCES personas(id) ON DELETE SET NULL,
+    UNIQUE KEY uk_persona_periodo (persona_id, periodo_mes, periodo_anio)
+);
+
+-- Trigger: actualizar graduacion_actual en personas después de INSERT
+DELIMITER $$
+
+CREATE TRIGGER actualizar_graduacion_actual
+AFTER INSERT ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE fecha_max DATE;
+  SELECT MAX(fecha)
+  INTO fecha_max
+  FROM historial_graduaciones
+  WHERE persona_id = NEW.persona_id;
+
+  IF NEW.fecha = fecha_max THEN
+    UPDATE personas
+    SET graduacion_actual = NEW.graduacion
+    WHERE id = NEW.persona_id;
+  END IF;
+END$$
+
+-- Trigger: UPDATE en historial_graduaciones
+CREATE TRIGGER recalcular_graduacion_actual_update
+AFTER UPDATE ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE grad VARCHAR(50);
+  SELECT graduacion
+  INTO grad
+  FROM historial_graduaciones
+  WHERE persona_id = NEW.persona_id
+  ORDER BY fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET graduacion_actual = grad
+  WHERE id = NEW.persona_id;
+END$$
+
+-- Trigger: DELETE en historial_graduaciones
+CREATE TRIGGER recalcular_graduacion_actual_delete
+AFTER DELETE ON historial_graduaciones
+FOR EACH ROW
+BEGIN
+  DECLARE grad VARCHAR(50);
+  SELECT graduacion
+  INTO grad
+  FROM historial_graduaciones
+  WHERE persona_id = OLD.persona_id
+  ORDER BY fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET graduacion_actual = grad
+  WHERE id = OLD.persona_id;
+END$$
+
+-- Trigger: actualizar dojo_actual_id al insertar participación en dojo
+CREATE TRIGGER actualizar_dojo_actual_insert
+AFTER INSERT ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE dojo_ultimo INT;
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = NEW.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = NEW.persona_id;
+END$$
+
+-- Trigger: actualizar dojo_actual_id al hacer UPDATE
+CREATE TRIGGER actualizar_dojo_actual_update
+AFTER UPDATE ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE dojo_ultimo INT;
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = NEW.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = NEW.persona_id;
+END$$
+
+-- Trigger: actualizar dojo_actual_id al hacer DELETE
+CREATE TRIGGER actualizar_dojo_actual_delete
+AFTER DELETE ON personas_por_dojo
+FOR EACH ROW
+BEGIN
+  DECLARE dojo_ultimo INT;
+  SELECT dojo_id
+  INTO dojo_ultimo
+  FROM personas_por_dojo
+  WHERE persona_id = OLD.persona_id
+  ORDER BY desde_fecha DESC
+  LIMIT 1;
+
+  UPDATE personas
+  SET dojo_actual_id = dojo_ultimo
+  WHERE id = OLD.persona_id;
+END$$
+
+DELIMITER ;
+
+¿Querés que también te prepare:
+
+    Un archivo .sql descargable
+
+    Un script de carga de ejemplo (INSERT)
+
+    O una guía de migración desde Excel a esta base?
+
+Puedo ayudarte con eso también.
