@@ -1,3 +1,4 @@
+-----------------------------------------------------------------------------------------------------------------------------------
 crear esquema.sql para BD mysql
 ChatGPT dijo:
 
@@ -68,6 +69,7 @@ Tablas que propongo generar:
 
     datos_aikido: con los datos de práctica, vinculada a personas por DNI u otro identificador.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🗃️ SQL — Esquema Base de Datos MySQL
 
 CREATE TABLE personas (
@@ -114,6 +116,8 @@ CREATE TABLE datos_aikido (
     Si preferís usar el DNI como clave externa en vez de un id numérico, también es posible.
 
 ¿Querés que genere este .sql como archivo descargable? ¿O preferís agregar más tablas como dojos, instructores, etc.?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 agrego dojos, instructores 
 CREATE TABLE IF NOT EXISTS dojos (
@@ -172,6 +176,7 @@ CREATE TABLE IF NOT EXISTS instructores_por_dojo (
     FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
 );
 
+-----------------------------------------------------------------------------------------------------------------------------------
 relacionar con la tabla personas anterior
 ChatGPT dijo:
 
@@ -260,6 +265,8 @@ CREATE TABLE IF NOT EXISTS datos_aikido (
     Flexible: permite múltiples instructores por dojo y múltiples dojos por instructor.
 
 ¿Querés que te lo genere como archivo .sql para descarga? ¿Te gustaría agregar algo más como historial de exámenes, licencias o asistencia?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 que la persona participe en un dojo
 que la persona tenga historial de exámenes
@@ -274,7 +281,9 @@ Perfecto, ahora integramos tres nuevas necesidades clave:
 
     Relación de cada examen con un dojo y un instructor.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 Nuevas tablas y relaciones:
+-----------------------------------------------------------------------------------------------------------------------------------
 🧍‍♂️ Participación de una persona en un dojo:
 
 CREATE TABLE IF NOT EXISTS personas_por_dojo (
@@ -290,6 +299,7 @@ CREATE TABLE IF NOT EXISTS personas_por_dojo (
 
     Esto permite registrar una permanencia con fechas (útil si la persona cambia de dojo).
 
+-----------------------------------------------------------------------------------------------------------------------------------
 📜 Historial de exámenes:
 
 CREATE TABLE IF NOT EXISTS examenes (
@@ -314,6 +324,7 @@ CREATE TABLE IF NOT EXISTS examenes (
 
     El instructor que lo examinó (también una persona).
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔄 Relación con el resto del esquema
 
 Estas nuevas tablas complementan las anteriores:
@@ -331,12 +342,16 @@ Estas nuevas tablas complementan las anteriores:
 ¿Querés que combine esto en el archivo .sql completo?
 
 Puedo armarlo listo para importación o ejecución directa en MySQL, o incluso prepararlo para un entorno como PhpMyAdmin o Workbench. ¿Querés que te lo exporte?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 para copiar y pegar 
 ChatGPT dijo:
 
 Perfecto. Acá tenés el esquema completo listo para copiar y pegar directamente en tu entorno MySQL (Workbench, PhpMyAdmin, CLI, etc.).
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 esquema.sql completo
+-----------------------------------------------------------------------------------------------------------------------------------
 
 -- Tabla de personas
 CREATE TABLE IF NOT EXISTS personas (
@@ -438,6 +453,7 @@ CREATE TABLE IF NOT EXISTS examenes (
     FOREIGN KEY (instructor_id) REFERENCES personas(id) ON DELETE SET NULL
 );
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Este diseño cubre:
 
 ✅ Registro de personas, dojos, instructores y practicantes
@@ -445,11 +461,14 @@ Este diseño cubre:
 ✅ Relación clara entre instructores, alumnos y dojos
 
 ¿Querés que lo acompañe con algunos INSERT de ejemplo o consultas frecuentes (JOIN, WHERE, etc.)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 agregar el cobro de cuotas de las personas
 ChatGPT dijo:
 
 ¡Perfecto! Para registrar el cobro de cuotas, vamos a agregar una nueva tabla cuotas, que almacene pagos realizados por cada persona, permitiendo control mensual, monto, método de pago, estado, etc.
+-----------------------------------------------------------------------------------------------------------------------------------
 🧾 Tabla cuotas
 
 CREATE TABLE IF NOT EXISTS cuotas (
@@ -495,11 +514,14 @@ VALUES (1, '2025-03-05', 3, 2025, 4500.00, 'transferencia');
     generar una vista para ver fácilmente el estado de pagos mensuales?
 
 Te puedo ayudar con eso también.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si, dale
 ChatGPT dijo:
 
 Genial. Vamos a extender el esquema para incluir:
+-----------------------------------------------------------------------------------------------------------------------------------
 1. 💲Valores de cuota esperados por dojo o persona
 
 Esto permite:
@@ -529,6 +551,7 @@ CREATE TABLE IF NOT EXISTS cuotas_valores_personalizados (
     FOREIGN KEY (persona_id) REFERENCES personas(id) ON DELETE CASCADE
 );
 
+-----------------------------------------------------------------------------------------------------------------------------------
 2. ❗️Cuotas vencidas, condonadas o no pagadas
 
 Agregamos campos a la tabla cuotas:
@@ -541,6 +564,7 @@ ADD COLUMN condonada BOOLEAN DEFAULT FALSE;
 
         condonada = TRUE si se decide perdonar esa cuota.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 3. 👁 Vista: estado de cuotas por persona
 
 Ejemplo de una vista mensual que muestra pagado, vencido o condonado:
@@ -573,10 +597,12 @@ Eso lo implementás desde la lógica de aplicación, o se puede crear un procedi
 
 ¿Querés que prepare un ejemplo de procedimiento o trigger para calcular automáticamente el monto al insertar una cuota?
 
+-----------------------------------------------------------------------------------------------------------------------------------
 como se resuelve tener el historial de graduaciones y obtener la graducion actual en este esquema
 ChatGPT dijo:
 
 Excelente pregunta. Tener un historial de graduaciones y poder consultar fácilmente la graduación actual se resuelve de forma limpia con una tabla de historial bien diseñada y una consulta (o vista) que devuelva la más reciente.
+-----------------------------------------------------------------------------------------------------------------------------------
 🗃️ Paso 1: Tabla de historial de graduaciones
 
 CREATE TABLE IF NOT EXISTS historial_graduaciones (
@@ -595,6 +621,7 @@ CREATE TABLE IF NOT EXISTS historial_graduaciones (
 
     Esta tabla reemplaza (o mejora) lo que datos_aikido.graduacion_actual y examinador_fecha_examen intentaban registrar.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 2: Obtener graduación actual
 
 Usamos una vista con la graduación más reciente por persona:
@@ -628,16 +655,20 @@ JOIN personas p ON v.persona_id = p.id
 WHERE p.nombre_completo = 'Juan Pérez';
 
 ¿Querés que agregue un trigger que actualice un campo graduacion_actual en personas al insertar en el historial? También es posible si preferís mantener una columna de acceso directo.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
 
 Perfecto, si querés mantener una columna graduacion_actual en la tabla personas para acceso rápido (sin hacer JOIN), podés hacerlo con un AFTER INSERT trigger que actualice ese campo cada vez que se agregue un nuevo registro a historial_graduaciones.
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 Paso 1: Agregar columna en personas
 
 ALTER TABLE personas
 ADD COLUMN graduacion_actual VARCHAR(50);
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧲 Paso 2: Crear trigger
 
 DELIMITER $$
@@ -675,6 +706,8 @@ Cada vez que se inserta una nueva graduación:
 Opcional: mantener actualizado también en caso de UPDATE/DELETE
 
 Esto es más complejo, pero si querés te puedo preparar triggers AFTER UPDATE y AFTER DELETE que recalculen la graduación actual si se modifica o elimina una entrada. ¿Querés incluirlos también?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -688,6 +721,7 @@ Perfecto. Vamos a crear dos triggers adicionales para mantener la columna gradua
 
     AFTER DELETE: Recalcula la graduación actual si se borra el último registro.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 1: Trigger AFTER UPDATE
 
 DELIMITER $$
@@ -712,6 +746,7 @@ END$$
 
 DELIMITER ;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 2: Trigger AFTER DELETE
 
 DELIMITER $$
@@ -743,6 +778,8 @@ DELIMITER ;
     Se actualiza automáticamente con INSERT, UPDATE o DELETE.
 
 ¿Querés que prepare también algo similar para el dojo actual en el que practica la persona (personas.dojo_actual_id)? Es común cuando alguien cambia de sede.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -754,12 +791,14 @@ Perfecto. Para manejar el dojo actual de una persona, vamos a trabajar con la ta
 
     Crear triggers (INSERT, UPDATE, DELETE) sobre personas_por_dojo que mantengan actualizado el dojo más reciente.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 1: Agregar campo dojo_actual_id en personas
 
 ALTER TABLE personas
 ADD COLUMN dojo_actual_id INT,
 ADD FOREIGN KEY (dojo_actual_id) REFERENCES dojos(id) ON DELETE SET NULL;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 2: Trigger AFTER INSERT en personas_por_dojo
 
 DELIMITER $$
@@ -785,6 +824,7 @@ END$$
 
 DELIMITER ;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 3: Trigger AFTER UPDATE en personas_por_dojo
 
 DELIMITER $$
@@ -809,6 +849,7 @@ END$$
 
 DELIMITER ;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Paso 4: Trigger AFTER DELETE en personas_por_dojo
 
 DELIMITER $$
@@ -838,6 +879,8 @@ DELIMITER ;
 La columna personas.dojo_actual_id estará siempre sincronizada con el último dojo asociado en su historial (personas_por_dojo) según la fecha desde_fecha.
 
 ¿Querés que prepare también un VIEW que combine todo el estado actual (persona, graduación, dojo, última cuota)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
@@ -852,6 +895,7 @@ Excelente. Vamos a crear una vista resumen que combine lo siguiente:
 
     Última cuota paga (mes, año, monto)
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 Vista: vista_estado_actual_personas
 
 CREATE VIEW vista_estado_actual_personas AS
@@ -911,17 +955,21 @@ SELECT * FROM vista_estado_actual_personas WHERE nombre_completo LIKE '%Juana%';
     ¿O que sean instructores?
 
 También se puede crear vistas específicas o consultas con filtros. ¿Te gustaría eso también?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si
 ChatGPT dijo:
 
 Perfecto, a continuación te dejo consultas filtradas útiles y opcionales que podés adaptar o convertir en VIEWs si querés acceso rápido desde la app o desde reportes.
+-----------------------------------------------------------------------------------------------------------------------------------
 🔎 1. Personas sin dojo actual
 
 SELECT *
 FROM personas
 WHERE dojo_actual_id IS NULL;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔎 2. Personas con cuota vencida (último pago anterior a mayo 2025, por ejemplo)
 
 SELECT p.id, p.nombre_completo, c.periodo_mes, c.periodo_anio, c.fecha_pago
@@ -942,6 +990,7 @@ WHERE CONCAT(c.periodo_anio, LPAD(c.periodo_mes, 2, '0')) < '202505';
 
     Cambiá '202505' por el mes/año que quieras considerar como corte.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔎 3. Personas que nunca pagaron cuota
 
 SELECT p.*
@@ -949,6 +998,7 @@ FROM personas p
 LEFT JOIN cuotas c ON p.id = c.persona_id
 WHERE c.id IS NULL;
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🔎 4. Personas que son instructores activos
 
 SELECT DISTINCT p.id, p.nombre_completo, i.rol, d.nombre AS dojo
@@ -967,6 +1017,8 @@ CREATE VIEW vista_instructores_activos AS
 SELECT ...;
 
 ¿Querés que prepare un dashboard SQL con múltiples vistas o una consulta que combine filtros (como cuota vencida + sin dojo + sin graduación)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 no, necesito aclarar que las cuotas son de las personas pero no hacia el dojo sino es una membresía para la asociación en la que participa el dojo
 ChatGPT dijo:
@@ -983,6 +1035,7 @@ Gracias por la aclaración, es muy importante y cambia la perspectiva del diseñ
 
     Podemos mantener opcionalmente el dojo en que la persona estaba al momento del pago, solo como referencia histórica, si querés.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 Actualización sugerida de cuotas:
 
 CREATE TABLE IF NOT EXISTS cuotas (
@@ -1013,6 +1066,7 @@ CREATE TABLE IF NOT EXISTS cuotas (
 
 En este modelo, la Asociación (ADA) recibe el dinero directamente o a través de un mecanismo interno. Si querés llevar registro contable más preciso a nivel de Asociación, podés hacer:
 
+-----------------------------------------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS ingresos_asociacion (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cuota_id INT,
@@ -1027,6 +1081,8 @@ CREATE TABLE IF NOT EXISTS ingresos_asociacion (
 ¿Querés modelar los ingresos de la Asociación o dejarlo solo en la tabla cuotas?
 
 También podemos modelar gastos, subsidios a dojos, etc., si es relevante.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 ´por ahora lo dejamos en la tabla cuotas
 ChatGPT dijo:
@@ -1034,6 +1090,7 @@ ChatGPT dijo:
 Perfecto, entonces mantenemos el diseño simple y funcional, con todo en la tabla cuotas, sin asociarlo como ingreso directo al dojo.
 ✅ Estado actual de la tabla cuotas (actualizada y alineada con tu aclaración):
 
+-----------------------------------------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS cuotas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     persona_id INT NOT NULL,
@@ -1065,6 +1122,8 @@ Cuando quieras, podemos avanzar con:
     Gestión de cuotas especiales (anuales, exentas, etc.).
 
 ¿Querés que te deje ahora una consulta para ver deuda acumulada por persona (cuotas que deberían estar pagas pero no lo están)?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 no, quisiera registrar la asistencia de las personas que participan en un dojo pero no sía a día sino como un ingresó por período mensual que el responsable del dojo debería mantener
 ChatGPT dijo:
@@ -1073,6 +1132,7 @@ Excelente, eso se puede modelar muy claramente. Lo que estás describiendo es:
 
     Un registro mensual de asistencia (o participación) que mantiene el responsable del dojo, no asistencia diaria.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Solución: tabla asistencia_mensual
 
 Esta tabla resume la participación mensual de una persona en un dojo, sin detallar cada clase.
@@ -1127,6 +1187,8 @@ INSERT INTO asistencia_mensual (
     Vincular este registro con el cobro de la cuota (por ejemplo, “asistió pero no pagó”)?
 
 Podemos extender esto cuando quieras. ¿Querés que agregue esta tabla al esquema completo final que venís armando?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 si quiero agregar esto al esquema completo para copiar y pegar
 ChatGPT dijo:
@@ -1145,7 +1207,9 @@ Perfecto. A continuación te dejo el esquema completo actualizado con todo lo qu
 
     Triggers para mantener graduacion_actual y dojo_actual_id
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 ESQUEMA COMPLETO ACTUALIZADO PARA COPIAR Y PEGAR
+-----------------------------------------------------------------------------------------------------------------------------------
 
 -- Tabla principal de personas
 CREATE TABLE IF NOT EXISTS personas (
@@ -1383,6 +1447,7 @@ DELIMITER ;
 
 Puedo ayudarte con eso también.
 
+-----------------------------------------------------------------------------------------------------------------------------------
 Tengo otro chat donde fuimos generando proyecto registros Aikido PHP
 podemos juntar estas definiciones de tablas con lo definido en él?
 ChatGPT dijo:
@@ -1423,6 +1488,8 @@ Podés comenzar por subir:
     O bien pegar directamente el contenido de controladores o scripts SQL embebidos.
 
 Estoy listo para ayudarte con eso. 💪
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 voy a cambiar 
 te pido lo que ofreciste antes, Un script de carga de ejemplo (INSERT) pero en codigo para copiar
@@ -1444,7 +1511,9 @@ ChatGPT dijo:
 
     Asistencia mensual
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 Script de carga de ejemplo (INSERT)
+-----------------------------------------------------------------------------------------------------------------------------------
 
 -- Personas
 INSERT INTO personas (nombre_completo, dni, fecha_nacimiento, email, telefono)
@@ -1503,6 +1572,8 @@ Con este script, tendrás cargado:
         Un registro de asistencia mensual
 
 ¿Querés que te prepare también un set de DELETE para limpiar todo, o una versión con más personas y graduaciones variadas?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 una versión con mas personas y graduaciones variadas
 ChatGPT dijo:
@@ -1519,7 +1590,9 @@ Perfecto. Aquí tenés una versión extendida con más personas, distintas gradu
 
     Instructor asignado
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🧩 Script extendido con más ejemplos
+-----------------------------------------------------------------------------------------------------------------------------------
 
 -- Personas
 INSERT INTO personas (id, nombre_completo, dni, fecha_nacimiento, email, telefono)
@@ -1570,6 +1643,7 @@ VALUES
 (3, 1, 3, 2025, 6, 'Faltó una semana por viaje', 1),
 (4, 1, 4, 2025, 4, 'Ausencias justificadas por estudios', 1);
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Qué tenés ahora:
 Persona	Graduaciones	Cuotas pagadas	Asistencia
 Juan	No especificado	—	— (es instructor)
@@ -1578,6 +1652,8 @@ Carlos	1er Dan	Mar 2025	Mar 2025
 Sofía	6º Kyu	Abr 2025	Abr 2025
 
 ¿Querés que también te prepare un dump .sql completo con estructura + datos para importar en MySQL o phpMyAdmin?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 vuelvo a la adaptacions de archivos php
 ChatGPT dijo:
@@ -1602,6 +1678,8 @@ Perfecto. Para ayudarte a adaptar los archivos PHP a este esquema completo, pod�
     (Opcional) Agregar mejoras como SELECT para combos (dojos, instructores, etc.).
 
 Cuando quieras, subí o pegá el primer archivo PHP que quieras adaptar y lo trabajamos juntos.
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 armar un php para registro de personas según la definición de tablas
 ChatGPT dijo:
@@ -1618,6 +1696,7 @@ Incluye:
 
     Selección del dojo actual (conectado a la tabla dojos)
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Conexión a base de datos (db.php)
 
 <?php
@@ -1628,6 +1707,7 @@ if ($mysqli->connect_errno) {
 }
 ?>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Formulario de registro + inserción (registro_persona.php)
 
 <?php
@@ -1731,11 +1811,14 @@ $dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
     Integración con un login si solo ciertos usuarios pueden registrar
 
 ¿Querés que siga con un módulo para registrar graduaciones, cuotas o asistencia mensual?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 Prevención de Duplicados por DNI
 ChatGPT dijo:
 
 Excelente decisión. Para prevenir el registro de personas duplicadas por DNI, vamos a usar dos niveles de validación:
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. Restricción a nivel de base de datos
 
 Ya en tu tabla personas, definimos:
@@ -1745,6 +1828,7 @@ dni VARCHAR(15) UNIQUE
     Esto impide automáticamente que se inserte un registro con un dni que ya existe.
     Pero para que el usuario no reciba un “error feo”, lo complementamos con:
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. Validación previa en el código PHP
 
 Antes de hacer el INSERT, verificamos si el DNI ya existe y damos un mensaje amigable.
@@ -1808,6 +1892,8 @@ $check->close();
     Evita errores SQL por duplicado.
 
 ¿Querés que también agreguemos búsqueda en vivo de persona por DNI (por ejemplo, al tipear)? ¿O un módulo para editar personas existentes?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 Manejo de imágenes si vas a cargar firma o DNI
 ChatGPT dijo:
@@ -1822,6 +1908,7 @@ Subir 2 imágenes opcionales:
     ✍️ Firma digital (firma_digital)
 
 Se guardan en una carpeta local (por ejemplo, /uploads) y en la base de datos solo se guarda la ruta del archivo.
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 1. Agregá los campos en el formulario
 
 <form method="POST" enctype="multipart/form-data">
@@ -1833,6 +1920,7 @@ Se guardan en una carpeta local (por ejemplo, /uploads) y en la base de datos so
     <button type="submit">Registrar</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 2. Código PHP para guardar las imágenes
 
 Justo antes del INSERT, agregá esto en tu archivo registro_persona.php:
@@ -1858,6 +1946,7 @@ function guardarImagen($campo, $directorio) {
 $ruta_dni = guardarImagen('imagen_dni', 'uploads/dni');
 $ruta_firma = guardarImagen('firma_digital', 'uploads/firma');
 
+-----------------------------------------------------------------------------------------------------------------------------------
 🛠 3. Ajustar el INSERT para guardar rutas
 
 Cambiá el SQL y el bind_param:
@@ -1893,6 +1982,7 @@ $stmt->bind_param(
     $ruta_firma
 );
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Resultado
 
     El usuario puede subir una foto del DNI y/o la firma.
@@ -1910,6 +2000,8 @@ $stmt->bind_param(
     Para mostrar luego la imagen: <img src="<?= $persona['imagen_dni'] ?>">.
 
 ¿Querés que prepare también un módulo para editar una persona incluyendo reemplazo de las imágenes?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 editar una persona incluyendo reemplazo de las imágenes
 ChatGPT dijo:
@@ -1922,6 +2014,7 @@ Perfecto. Te armo un módulo PHP para editar personas, que incluye:
 
     Opción de conservar las imágenes si no se suben nuevas
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. URL: editar_persona.php?id=1
 🛠 Código completo
 
@@ -2065,6 +2158,7 @@ $dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
     <button type="submit">Guardar cambios</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ Este módulo permite:
 
     Editar todos los campos de la persona
@@ -2075,8 +2169,9 @@ $dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
 
     Guardar solo si se cambió algo
 
+-----------------------------------------------------------------------------------------------------------------------------------
 📁 Estructura de archivos recomendada
-
+-----------------------------------------------------------------------------------------------------------------------------------
 /registro_aikido/
 ├── db.php
 ├── registro_persona.php
@@ -2086,6 +2181,8 @@ $dojos = $mysqli->query("SELECT id, nombre FROM dojos ORDER BY nombre");
 │   └── firma/
 
 ¿Querés que te prepare también un listado de personas con botón de editar?
+
+-----------------------------------------------------------------------------------------------------------------------------------
 Dijiste:
 módulo para registrar graduaciones, cuotas o asistencia mensual
 ChatGPT dijo:
@@ -2099,6 +2196,7 @@ ChatGPT dijo:
     Registrar asistencia mensual
 
 Todos los módulos se conectan a la base de datos (db.php) y asumen que ya tenés personas, dojos e instructores.
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 1. registrar_graduacion.php
 
 <?php
@@ -2150,6 +2248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Registrar</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 2. registrar_cuota.php
 
 <?php
@@ -2191,6 +2290,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Registrar</button>
 </form>
 
+-----------------------------------------------------------------------------------------------------------------------------------
 ✅ 3. registrar_asistencia.php
 
 <?php
