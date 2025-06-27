@@ -99,6 +99,9 @@ VALUES
 (2, '2025-04-10', 4, 2025, 4500.00, 'efectivo'),
 (3, '2025-03-05', 3, 2025, 4500.00, 'efectivo'),
 (4, '2025-04-15', 4, 2025, 4500.00, 'transferencia');
+-- Registro de una cuota de marzo 2025
+INSERT INTO cuotas (persona_id, fecha_pago, periodo_mes, periodo_anio, monto, metodo_pago)
+VALUES (1, '2025-03-05', 3, 2025, 4500.00, 'transferencia');
 
 -- Asistencia mensual
 INSERT INTO asistencia_mensual (persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id)
@@ -107,3 +110,10 @@ VALUES
 (2, 1, 4, 2025, 8, 'Asistió a todas', 1),
 (3, 1, 3, 2025, 6, 'Faltó una semana por viaje', 1),
 (4, 1, 4, 2025, 4, 'Ausencias justificadas por estudios', 1);
+
+-- Registrar que Juan Pérez asistió a 8 clases en mayo 2025 en Dojo N°3
+INSERT INTO asistencia_mensual (
+    persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id
+) VALUES (
+    1, 3, 5, 2025, 8, 'Participación completa del mes', 12
+);
