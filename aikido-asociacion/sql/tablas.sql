@@ -77,8 +77,10 @@ CREATE TABLE IF NOT EXISTS personas (
     imagen_dni TEXT,
     firma_digital TEXT,
 
-    dojo_id INT,
+    dojo_actual_id INT,
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    graduacion_actual VARCHAR(50),
 
     FOREIGN KEY (dojo_id) REFERENCES dojos(id)
 );

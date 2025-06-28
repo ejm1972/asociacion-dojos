@@ -10,7 +10,7 @@ VALUES
 ('Aikido Rosario Dojo','Rosario','Santa Fe','Argentina','Bv. Oroño 1234','2005-03-01','Rama Central Aikikai','2010-05-20',1,'341-9999999','dojo.rosario@aikido.org','Primer dojo fundado en Rosario.'),
 ('Aikido Córdoba Dojo','Córdoba','Córdoba','Argentina','Av. Colón 4567','2012-06-15','Rama Oeste','2015-08-10',2,'351-8888888','cordoba@aikido.org','Afiliado recientemente a ADA.');
 
-INSERT INTO aikido_asociacion.dojos (id, nombre, ciudad, pais)
+INSERT INTO dojos (id, nombre, ciudad, pais)
 VALUES
 (1, 'Stylo Dojo', 'San Martín', 'Argentina'),
 (2, 'Koinobori Dojo', 'Lomas de Zamora', 'Argentina'),
@@ -93,11 +93,11 @@ VALUES
 (2, 1, 3, 2025, 7, 'Buena asistencia', 1),
 (2, 1, 4, 2025, 8, 'Asistió a todas', 1),
 (3, 1, 3, 2025, 6, 'Faltó una semana por viaje', 1),
-(4, 1, 4, 2025, 4, 'Ausencias justificadas por estudios', 1);
+(4, 1, 4, 2025, 4, 'Ausencias justificadas por estudios', 1)
+;
 
 -- Registrar que Juan Pérez asistió a 8 clases en mayo 2025 en Dojo N°3
-INSERT INTO asistencia_mensual (
-    persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id
-) VALUES (
-    1, 3, 5, 2025, 8, 'Participación completa del mes', 12
-);
+INSERT INTO asistencia_mensual (persona_id, dojo_id, periodo_mes, periodo_anio, cantidad_clases, observaciones, registrado_por_id) 
+VALUES 
+(1, 3, 5, 2025, 8, 'Participación completa del mes', 12)
+;

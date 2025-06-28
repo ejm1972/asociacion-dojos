@@ -13,17 +13,17 @@ SELECT
     d.mail AS dojo_mail,
     d.celular AS dojo_celular,
     d.observaciones AS dojo_observaciones,
-
+--
     ra.nombre AS responsable_nombre,
     ra.apellido AS responsable_apellido,
     ra.email AS responsable_email,
     ra.telefono AS responsable_telefono,
-
+--
     ip.nombre AS instructor_principal_nombre,
     ip.apellido AS instructor_principal_apellido,
     ipd.grado AS instructor_principal_grado,
     ipd.desde_fecha AS instructor_principal_desde
-
+--
 FROM dojos d
 LEFT JOIN personas ra ON d.responsable_admin_id = ra.id
 LEFT JOIN instructores_por_dojo ipd ON d.id = ipd.dojo_id AND ipd.rol = 'principal'
@@ -47,11 +47,12 @@ JOIN personas p ON ipd.persona_id = p.id
 JOIN dojos d ON ipd.dojo_id = d.id
 ORDER BY d.nombre, ipd.rol;
 
---3. 👁 Vista: estado de cuotas por persona
+-- Vista: estado de cuotas por persona
 CREATE VIEW vista_estado_cuotas AS
 SELECT 
     p.id AS persona_id,
-    p.nombre_completo,
+    p.nombre,
+    p.apellido,
     c.periodo_mes,
     c.periodo_anio,
     c.monto,
@@ -62,9 +63,9 @@ SELECT
     c.fecha_pago
 FROM personas p
 LEFT JOIN cuotas c ON c.persona_id = p.id
-ORDER BY p.nombre_completo, c.periodo_anio, c.periodo_mes;
+ORDER BY p.nombre, p.apellido, c.periodo_anio, c.periodo_mes;
 
---✅ Paso 2: Obtener graduación actual
+-- Vista obtener graduación actual
 CREATE VIEW vista_graduacion_actual AS
 SELECT h1.*
 FROM historial_graduaciones h1
@@ -75,28 +76,29 @@ JOIN (
 ) h2
 ON h1.persona_id = h2.persona_id AND h1.fecha = h2.fecha_max;
 
---🧩 Vista: vista_estado_actual_personas
+-- Vista: vista_estado_actual_personas
 CREATE VIEW vista_estado_actual_personas AS
 SELECT
   p.id AS persona_id,
-  p.nombre_completo,
+  p.nombre,
+  p.apellido,
   p.dni,
   p.email,
   p.telefono,
   p.graduacion_actual,
-  
+--  
   d.nombre AS dojo_actual_nombre,
   d.ciudad AS dojo_actual_ciudad,
-  
+--  
   c.periodo_mes AS ultimo_mes_pagado,
   c.periodo_anio AS ultimo_anio_pagado,
   c.monto AS ultimo_monto_pagado,
   c.fecha_pago AS fecha_ultimo_pago,
   c.metodo_pago
-  
+--  
 FROM personas p
 LEFT JOIN dojos d ON p.dojo_actual_id = d.id
-
+--
 LEFT JOIN (
   SELECT c1.*
   FROM cuotas c1
