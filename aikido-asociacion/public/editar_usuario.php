@@ -52,9 +52,10 @@ ob_start();
     <label>Usuario:</label><br>
     <input name="username" value="<?= htmlspecialchars($usuario['username']) ?>" required><br><br>
 
-    <label>Nueva contraseña (opcional):</label><br>
+    <label>Nueva contraseña (opcional):<br>
     <input name="password" type="password"><br><br>
-
+    </label>
+    
     <label>Rol:</label><br>
     <select name="rol" required>
         <?php foreach (['admin', 'dojo', 'lector'] as $rol): ?>

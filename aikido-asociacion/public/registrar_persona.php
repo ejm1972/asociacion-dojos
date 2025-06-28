@@ -1,6 +1,6 @@
 <?php
-include('../includes/auth.php');
-include('../config/db.php');
+include_once  '../includes/auth.php';
+include_once  '../config/db.php';
 require_once('../includes/rol.php');
 
 requiere_rol(['admin', 'dojo']);
@@ -65,4 +65,4 @@ ob_start();
 
 <?php
 $contenido = ob_get_clean();
-include('../includes/layout.php');
+include_once '../includes/layout.php';

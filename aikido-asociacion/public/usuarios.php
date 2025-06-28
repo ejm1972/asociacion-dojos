@@ -1,6 +1,6 @@
 <?php 
-include('../includes/auth.php');
-include('../config/db.php');
+include '../includes/auth.php';
+include '../config/db.php';
 require_once('../includes/rol.php');
 
 requiere_rol(['admin']);

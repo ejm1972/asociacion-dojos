@@ -1,9 +1,6 @@
--- Trigger: actualizar graduacion_actual en personas después de INSERT
-DELIMITER $$
-
-CREATE TRIGGER actualizar_graduacion_actual
-AFTER INSERT ON historial_graduaciones
-FOR EACH ROW
+CREATE DEFINER=`root`@`%` TRIGGER qqq1
+AFTER INSERT
+ON historial_graduaciones FOR EACH ROW
 BEGIN
   DECLARE fecha_max DATE;
   SELECT MAX(fecha)
@@ -13,10 +10,33 @@ BEGIN
 
   IF NEW.fecha = fecha_max THEN
     UPDATE personas
-    SET graduacion_actual = NEW.graduacion
+    SET graduacion_actual = NEW.graduacion_obtenida
     WHERE id = NEW.persona_id;
   END IF;
-END$$
+END;
+
+
+
+
+
+
+
+-- Trigger: actualizar graduacion_actual en personas después de INSERT
+CREATE TRIGGER actualizar_graduacion_actual
+AFTER INSERT ON historial_graduaciones FOR EACH ROW
+BEGIN
+  DECLARE fecha_max DATE;
+  SELECT MAX(fecha)
+  INTO fecha_max
+  FROM historial_graduaciones
+  WHERE persona_id = NEW.persona_id;
+
+  IF NEW.fecha = fecha_max THEN
+    UPDATE personas
+    SET graduacion_actual = NEW.graduacion_obtenida
+    WHERE id = NEW.persona_id;
+  END IF;
+END;
 
 -- Trigger: UPDATE en historial_graduaciones
 CREATE TRIGGER recalcular_graduacion_actual_update
@@ -34,7 +54,7 @@ BEGIN
   UPDATE personas
   SET graduacion_actual = grad
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 -- Trigger: DELETE en historial_graduaciones
 CREATE TRIGGER recalcular_graduacion_actual_delete
@@ -52,7 +72,7 @@ BEGIN
   UPDATE personas
   SET graduacion_actual = grad
   WHERE id = OLD.persona_id;
-END$$
+END;
 
 -- Trigger: actualizar dojo_actual_id al insertar participación en dojo
 CREATE TRIGGER actualizar_dojo_actual_insert
@@ -70,7 +90,7 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 -- Trigger: actualizar dojo_actual_id al hacer UPDATE
 CREATE TRIGGER actualizar_dojo_actual_update
@@ -88,7 +108,7 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 -- Trigger: actualizar dojo_actual_id al hacer DELETE
 CREATE TRIGGER actualizar_dojo_actual_delete
@@ -106,7 +126,7 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = OLD.persona_id;
-END$$
+END;
 
 DELIMITER ;
 
@@ -133,7 +153,7 @@ BEGIN
     SET graduacion_actual = NEW.graduacion
     WHERE id = NEW.persona_id;
   END IF;
-END$$
+END;
 
 DELIMITER ;
 
@@ -157,7 +177,7 @@ BEGIN
   UPDATE personas
   SET graduacion_actual = graduacion_nueva
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 DELIMITER ;
 
@@ -182,7 +202,7 @@ BEGIN
   UPDATE personas
   SET graduacion_actual = graduacion_nueva
   WHERE id = OLD.persona_id;
-END$$
+END;
 
 DELIMITER ;
 
@@ -207,7 +227,7 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 DELIMITER ;
 
@@ -232,7 +252,7 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = NEW.persona_id;
-END$$
+END;
 
 DELIMITER ;
 
@@ -257,6 +277,6 @@ BEGIN
   UPDATE personas
   SET dojo_actual_id = dojo_ultimo
   WHERE id = OLD.persona_id;
-END$$
+END;
 
 DELIMITER ;

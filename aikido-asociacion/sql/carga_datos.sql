@@ -1,9 +1,32 @@
 USE aikido_asociacion;
 
+-- Dojo
+INSERT INTO dojos (id, nombre, ciudad, provincia, pais, direccion, fecha_inicio, rama_dependencia, fecha_ingreso_ada, celular, mail)
+VALUES
+(1, 'Dojo Central', 'Buenos Aires', 'Buenos Aires', 'Argentina', 'Av. Siempre Viva 123', '2010-01-01', 'Shimbukan', '2012-05-15', '1134567890', 'dojo@central.com');
+
+INSERT INTO dojos (nombre, ciudad, pais, provincia, direccion, fecha_inicio, rama_dependencia, fecha_ingreso_ada, responsable_admin_id, celular, mail, observaciones) 
+VALUES 
+('Aikido Rosario Dojo','Rosario','Santa Fe','Argentina','Bv. Oroño 1234','2005-03-01','Rama Central Aikikai','2010-05-20',1,'341-9999999','dojo.rosario@aikido.org','Primer dojo fundado en Rosario.'),
+('Aikido Córdoba Dojo','Córdoba','Córdoba','Argentina','Av. Colón 4567','2012-06-15','Rama Oeste','2015-08-10',2,'351-8888888','cordoba@aikido.org','Afiliado recientemente a ADA.');
+
+INSERT INTO aikido_asociacion.dojos (id, nombre, ciudad, pais)
+VALUES
+(1, 'Stylo Dojo', 'San Martín', 'Argentina'),
+(2, 'Koinobori Dojo', 'Lomas de Zamora', 'Argentina'),
+(3, 'Dojo Fonrouge Koi', 'Lomas de Zamora', 'Argentina'),
+(4, 'Dojo Shanti Prema', 'San Antonio de Padua', 'Argentina'),
+(5, 'Dojo Koi Monte Grande', 'Monte Grande', 'Argentina'),
+(6, 'Aikido Seibu Dojo', 'Morón', 'Argentina');
+
 -- Usuario por defecto: admin / admin123
 INSERT INTO usuarios (username, password, rol)
-VALUES ('admin', '$2y$10$ArV7Fud75Zn5J01EXroNTOpUw2ALJ6mHbpRKCBfL6PMKq9CPrI5Ke', 'admin'); 
--- La contraseña 'admin123' fue hasheada con password_hash
+VALUES
+(1, 'admin', '$2y$10$ArV7Fud75Zn5J01EXroNTOpUw2ALJ6mHbpRKCBfL6PMKq9CPrI5Ke', 'admin', NULL),
+(2, 'ebustos', '$2y$10$V6DGltdLWFdBF.hZo.2H8u45cwNU2fqkm9UFucczbXFMos9yuWtXe', 'admin', 6),
+(3, 'ccoca', '$2y$10$0Gtols9UKjgiauXvNCWBzu7PLBbQCbIHkEAhjFWdUnJ2bMu2Ksli6', 'admin', 4),
+(4, 'acameroni', '$2y$10$lezbC4JbwBPxQfA33qn1g.qK5SqnTOxJDES3SSBqcp1wrYs3TMlO6', 'admin', 1);
+---------------------------------------------------------------------------------------------------------------------
 
 INSERT INTO personas (nombre, apellido, email, telefono)
 VALUES 
@@ -11,50 +34,6 @@ VALUES
   ('Lucía', 'Gómez', 'lucia.gomez@aikido.org', '341-2222222'),    -- id = 2
   ('Juan', 'Lopez', 'juan.lopez@aikido.org', '341-3333333');      -- id = 3
 
-INSERT INTO dojos (
-    nombre, ciudad, provincia, pais, direccion, 
-    fecha_inicio, rama_dependencia, fecha_ingreso_ada,
-    responsable_admin_id, celular, mail, observaciones
-) VALUES 
-  (
-    'Aikido Rosario Dojo',
-    'Rosario',
-    'Santa Fe',
-    'Argentina',
-    'Bv. Oroño 1234',
-    '2005-03-01',
-    'Rama Central Aikikai',
-    '2010-05-20',
-    1,
-    '341-9999999',
-    'dojo.rosario@aikido.org',
-    'Primer dojo fundado en Rosario.'
-  ),
-  (
-    'Aikido Córdoba Dojo',
-    'Córdoba',
-    'Córdoba',
-    'Argentina',
-    'Av. Colón 4567',
-    '2012-06-15',
-    'Rama Oeste',
-    '2015-08-10',
-    2,
-    '351-8888888',
-    'cordoba@aikido.org',
-    'Afiliado recientemente a ADA.'
-  );
-
--- Dojo 1: Rosario
-INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
-VALUES
-  (1, 1, 'principal', '4º Dan', '2005-03-01'),
-  (1, 3, 'adjunto', '2º Dan', '2021-01-01');
-
--- Dojo 2: Córdoba
-INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
-VALUES
-  (2, 2, 'principal', '3º Dan', '2012-06-15');
 
 SELECT * FROM vista_dojos_completa;
 SELECT * FROM vista_instructores_por_dojo;
@@ -67,15 +46,20 @@ VALUES
 (3, 'Carlos Díaz', '34567890', '1980-12-01', 'carlos@example.com', '3333-3333'),
 (4, 'Sofía Ruiz', '45678901', '2000-06-10', 'sofia@example.com', '4444-4444');
 
--- Dojo
-INSERT INTO dojos (id, nombre, ciudad, provincia, pais, direccion, fecha_inicio, rama_dependencia, fecha_ingreso_ada, celular, mail)
-VALUES
-(1, 'Dojo Central', 'Buenos Aires', 'Buenos Aires', 'Argentina', 'Av. Siempre Viva 123', '2010-01-01', 'Shimbukan', '2012-05-15', '1134567890', 'dojo@central.com');
-
 -- Juan Pérez como instructor principal desde 2020
 INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
 VALUES
 (1, 1, 'principal', '3er Dan', '2020-03-01');
+-- Dojo 1: Rosario
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+  (1, 1, 'principal', '4º Dan', '2005-03-01'),
+  (1, 3, 'adjunto', '2º Dan', '2021-01-01');
+
+-- Dojo 2: Córdoba
+INSERT INTO instructores_por_dojo (dojo_id, persona_id, rol, grado, desde_fecha)
+VALUES
+  (2, 2, 'principal', '3º Dan', '2012-06-15');
 
 -- Participación en el dojo
 INSERT INTO personas_por_dojo (persona_id, dojo_id, desde_fecha)
